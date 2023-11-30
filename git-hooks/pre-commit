@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Run the Dockerized pre-commit script
+# Run Black
+docker exec black autoflake .
+docker exec black isort .
+docker exec black black .

@@ -18,6 +18,12 @@ is an app for managing client cards with loyality stamps. Basic assumptions:
 ```
 docker-compose up
 ```
+### RUN FE
+as for now hot refresh doesnt work from docker so to run fe
+```
+yarn dev
+```
+
 
 ## RUN CODE-FORMATTER
 

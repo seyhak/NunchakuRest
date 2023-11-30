@@ -1,5 +1,6 @@
 .DS_Store
 
+.env
 # IDE
 /.idea/
 /.vscode/
@@ -9,4 +10,38 @@
 /backend/**/__pycache__/
 
 # frontend
+# dependencies
 /frontend/node_modules/
+/frontend/.pnp
+.pnp.js
+.yarn/install-state.gz
+# testing
+/coverage
+
+
+# next.js
+/frontend/.next/
+/frontend/out/
+
+# production
+/frontend/build
+
+# misc
+/frontend.DS_Store
+*.pem
+
+# debug
+/frontend/npm-debug.log*
+/frontend/yarn-debug.log*
+/frontend/yarn-error.log*
+
+# local env files
+/frontend/.env*.local
+
+# vercel
+/frontend/.vercel
+
+# typescript
+*.tsbuildinfo
+/frontend/next-env.d.ts
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
