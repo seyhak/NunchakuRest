@@ -1,0 +1,77 @@
+version: "3.8"
+
+services:
+  postgres:
+    container_name: pg
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=seyhak
+      - POSTGRES_PASSWORD=seyhak_pass
+      - POSTGRES_DB=PG
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # utilize this 
+      # - ./db/.pgpass:/var/lib/postgresql/data/.pgpass
+      # - ./db/pg_service.conf:/var/lib/postgresql/data/pg_service.conf
+      # - ./db/pg_service.conf:/pg_service.conf
+    tty: true
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "seyhak", "-d", "PG", "-h", "localhost"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+  # hot reload doesnt work with docker, fix later
+  # frontend:
+  #   container_name: frontend
+  #   build:
+  #     context: ./frontend/
+  #     dockerfile: Dockerfile.frontend
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./frontend/:/usr/src/app:delegated
+  #     # - nm:/usr/src/app/node_modules
+  #     # - next:/usr/src/app/.next
+  #   tty: true
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    environment:
+      PG_HOST: postgres
+      PG_NAME: PG
+      PG_USER: seyhak
+      PG_PASSWORD: seyhak_pass
+    volumes:
+      - ./backend/:/usr/src/app:delegated
+      - ./frontend/:/usr/src/app:delegated
+    depends_on:
+      # frontend:
+      #   condition: service_started
+      postgres:
+        condition: service_healthy
+    restart: on-failure
+    links:
+      - postgres
+    tty: true
+
+  black:
+    container_name: black
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile.formatter
+    volumes:
+      - ./backend/:/usr/src/app:delegated
+    tty : true
+
+volumes:
+  postgres_data:
+  # nm:
+  # next:

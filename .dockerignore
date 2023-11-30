@@ -1,0 +1,13 @@
+# Ignore temporary and build-related files
+.git
+.vscode
+__pycache__
+*.pyc
+
+# Ignore development and local environment files
+*.env
+*.log
+.env
+
+# Ignore node_modules directory (for projects with Node.js)
+# frontend/node_modules/
