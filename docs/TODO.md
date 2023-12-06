@@ -1,8 +1,9 @@
 ## Priority
-setup -> FE Welcome Page -> Roles -> Login -> Django Admin Menu ->  Ordering -> Displaying -> ...
+FE Welcome Page -> Roles -> Login -> Django Admin Menu -> prettier -> THEME -> Ordering -> Displaying -> github hooks -> ...
 
 ## Important
-[ ] Husky and githooks setup
+
+[x] Husky and githooks setup
 [ ] Login
 [ ] Creating Roles - Admin, Manager, Employee, Client
 [ ] Welcome page - SSR page advertising the restaurant
@@ -15,6 +16,9 @@ setup -> FE Welcome Page -> Roles -> Login -> Django Admin Menu ->  Ordering -> 
 [ ] Manager/employee can see orders from history, and later Charts from minor
 
 ## Major
+
+[ ] github hooks
+[ ] Add theme (after API) https://mui.com/material-ui/guides/next-js-app-router/
 [ ] Managing store state
 [ ] Manager can develop menu and manage ingredients (% profit margins)
 [ ] Manager can see charts perhaps using https://d3js.org displaying data related with some time
