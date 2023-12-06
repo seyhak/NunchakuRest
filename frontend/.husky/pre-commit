@@ -1,2 +1,2 @@
 cd frontend
-yarn lint
+yarn lint -fix
