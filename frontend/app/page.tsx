@@ -57,9 +57,9 @@ export default function Home() {
     window.addEventListener("scroll", handleArrowDisappearIfOnBottom)
     }
   `
-  console.log(str)
 
   return (
+    <>
     <main className="main">
       <Script id="show-banner">{str}</Script>
       <IntroSection className="revealed"/>
@@ -112,5 +112,9 @@ export default function Home() {
         <KeyboardArrowDownIcon />
       </Icon>
     </main>
+    <footer>
+          Nunchakurest® Seyhak Ly ©
+    </footer>
+    </>
   )
 }

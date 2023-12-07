@@ -12,7 +12,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    'localhost',
+]
 
 # Application definition
 
@@ -43,16 +45,28 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+}
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Next.js app
+]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",  # Next.js app
+]
 ROOT_URLCONF = "nunchakurest.urls"
 
 TEMPLATES = [
@@ -78,9 +92,9 @@ WSGI_APPLICATION = "nunchakurest.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 PG_HOST = os.environ.get("PG_HOST", "localhost")
-PG_USER = os.environ.get("PG_USER")
+PG_USER = os.environ.get("PG_USER", "seyhak")
 PG_NAME = os.environ.get("PG_NAME", "PG")
-PG_PASSWORD = os.environ.get("PG_PASSWORD", "PG")
+PG_PASSWORD = os.environ.get("PG_PASSWORD", "seyhak_pass")
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",

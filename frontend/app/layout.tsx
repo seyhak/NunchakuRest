@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
 import './globals.sass'
 import { ThemeRegistry } from '@/theme/ThemeRegistry'
+import { UserProvider } from '@/providers/user-provider'
+import { SnackbarProvider } from '@/providers/snackbar-provider'
 
 
 const montserrat = Montserrat({ subsets: ['latin'] })
@@ -19,12 +21,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <ThemeRegistry options={{ key: "mui" }}>
-        <body className={montserrat.className}>
-          {children}
-          <footer>
-          Nunchakurest® Seyhak Ly ©
-          </footer>
-        </body>
+        <SnackbarProvider>
+          <UserProvider>
+            <body className={montserrat.className}>
+              {children}
+            </body>
+          </UserProvider>
+        </SnackbarProvider>
       </ThemeRegistry>
     </html>
   )
