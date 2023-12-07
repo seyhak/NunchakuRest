@@ -17,7 +17,6 @@ type Theme = (typeof Themes)[keyof typeof Themes];
 const useActiveThemeProvider = () => {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)")
   const [activeTheme, setActiveTheme] = React.useState<Theme>(Themes.DARK)
-  console.log({ activeTheme, prefersDarkMode })
 
   const switchTheme = () => {
     setActiveTheme(prevTheme => prevTheme === Themes.DARK ? Themes.LIGHT : Themes.DARK)
@@ -83,7 +82,7 @@ export function ThemeRegistry(props: any) {
   })
 
   const { activeTheme, ...restUseActiveThemeProvider } = useActiveThemeProvider()
-  console.log({ activeTheme })
+
   return (
     <CacheProvider value={cache}>
       <ActiveThemeContext.Provider value={{ activeTheme, ...restUseActiveThemeProvider }}>

@@ -7,9 +7,11 @@ import { ActiveThemeContext } from '@/theme/ThemeRegistry'
 export default function Home() {
   const {switchTheme} = useContext(ActiveThemeContext)
   return (
-    <div >
-      Dashboard
-      <Button onClick={switchTheme}>Switch</Button>
-    </div>
+    <main className="main">
+      <div >
+        Dashboard
+        <Button onClick={switchTheme}>Switch</Button>
+      </div>
+    </main>
   )
 }

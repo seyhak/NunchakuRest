@@ -1,10 +1,11 @@
 ## Priority
-FE Welcome Page -> Roles -> Login -> Django Admin Menu -> prettier -> THEME -> Ordering -> Displaying -> github hooks -> ...
+FE Welcome Page -> Login -> Django Admin Menu -> Roles -> prettier -> THEME -> Ordering -> Displaying -> github hooks -> ...
 
 ## Important
 
+[ ] Fix git hooks and linters
 [x] Husky and githooks setup
-[ ] Login
+[x] Login
 [ ] Creating Roles - Admin, Manager, Employee, Client
 [ ] Welcome page - SSR page advertising the restaurant
 [ ] Displaying POS (ordering) for employee
