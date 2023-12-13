@@ -1,7 +1,7 @@
 import { Montserrat } from 'next/font/google'
 import "./layout.sass"
 import classNames from 'classnames'
-import { LoginManager } from './(layout-components)/LoginManager/LoginManager'
+import { LoginManager } from './layout-components/LoginManager/LoginManager'
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 

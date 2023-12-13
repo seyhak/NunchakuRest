@@ -9,11 +9,11 @@ Creates a new user account.
 #### Request
 
 {
-  "username": "rrashley",
-  "password": "xxxxxxx",
-  "first_name": "Ashley",
-  "last_name": "Raid",
-  "email": "rileyraid@xxx.com"
+"username": "rrashley",
+"password": "xxxxxxx",
+"first_name": "Ashley",
+"last_name": "Raid",
+"email": "rileyraid@xxx.com"
 }
 
 #### Response
@@ -21,10 +21,10 @@ Creates a new user account.
 - Status Code: 201 Created
 
 {
-  "username": "rrashley",
-  "first_name": "Ashley",
-  "last_name": "Raid",
-  "email": "rileyraid@xxx.com"
+"username": "rrashley",
+"first_name": "Ashley",
+"last_name": "Raid",
+"email": "rileyraid@xxx.com"
 }
 
 ### Error Response - Missing Field
@@ -32,11 +32,11 @@ Creates a new user account.
 #### Request
 
 {
-  "username": "rrashley",
-  "password": "xxxxxxx",
-  "first_name": "Ashley",
-  "last_name": "Raid",
-  "email": "rileyraid@xxx.com"
+"username": "rrashley",
+"password": "xxxxxxx",
+"first_name": "Ashley",
+"last_name": "Raid",
+"email": "rileyraid@xxx.com"
 }
 
 #### Response
@@ -44,7 +44,7 @@ Creates a new user account.
 - Status Code: 400 Bad Request
 
 {
-  "missing_field": ["This field is required."]
+"missing_field": ["This field is required."]
 }
 
 ### Error Response - Username Exists
@@ -52,11 +52,11 @@ Creates a new user account.
 #### Request
 
 {
-  "username": "rrashley",
-  "password": "xxxxxxx",
-  "first_name": "Ashley",
-  "last_name": "Raid",
-  "email": "rileyraid@xxx.com"
+"username": "rrashley",
+"password": "xxxxxxx",
+"first_name": "Ashley",
+"last_name": "Raid",
+"email": "rileyraid@xxx.com"
 }
 
 #### Response
@@ -64,7 +64,7 @@ Creates a new user account.
 - Status Code: 400 Bad Request
 
 {
-  "message": "duplicate key value violates unique constraint"
+"message": "duplicate key value violates unique constraint"
 }
 
 ## Login API
@@ -76,8 +76,8 @@ Logs in an existing user.
 #### Request
 
 {
-  "username": "rrashley",
-  "password": "xxxxxxx"
+"username": "rrashley",
+"password": "xxxxxxx"
 }
 
 #### Response
@@ -85,10 +85,10 @@ Logs in an existing user.
 - Status Code: 200 OK
 
 {
-  "username": "rrashley",
-  "first_name": "",
-  "last_name": "",
-  "email": ""
+"username": "rrashley",
+"first_name": "",
+"last_name": "",
+"email": ""
 }
 
 ### Error Response - Wrong Password
@@ -96,8 +96,8 @@ Logs in an existing user.
 #### Request
 
 {
-  "username": "rrashley",
-  "password": "PH"
+"username": "rrashley",
+"password": "PH"
 }
 
 #### Response
@@ -105,7 +105,7 @@ Logs in an existing user.
 - Status Code: 401 Unauthorized
 
 {
-  "message": "Invalid credentials."
+"message": "Invalid credentials."
 }
 
 ## Change Password API
@@ -119,7 +119,7 @@ Changes the password of the authenticated user.
 #### Request
 
 {
-  "password": "xhamster"
+"password": "xhamster"
 }
 
 #### Response
@@ -127,7 +127,7 @@ Changes the password of the authenticated user.
 - Status Code: 200 OK
 
 {
-  "message": "Password changed."
+"message": "Password changed."
 }
 
 ### Error Response - Not Authenticated
@@ -135,7 +135,7 @@ Changes the password of the authenticated user.
 #### Request
 
 {
-  "password": "xhamster"
+"password": "xhamster"
 }
 
 #### Response
@@ -143,5 +143,88 @@ Changes the password of the authenticated user.
 - Status Code: 403 Forbidden
 
 {
-  "detail": "Authentication credentials were not provided"
+"detail": "Authentication credentials were not provided"
 }
+
+## PRODUCT API
+
+### LIST
+
+`products/`
+
+### DETAILS
+
+`products/{id}`
+
+#### Response
+
+```
+{
+    "id": str(self.category.id),
+    "created_at": self.category.created_at.strftime(
+        "%Y-%m-%dT%H:%M:%S.%fZ"
+    ),
+    "updated_at": self.category.updated_at.strftime(
+        "%Y-%m-%dT%H:%M:%S.%fZ"
+    ),
+    "name": self.category.name,
+    "description": None,
+    "image_url": None,
+    "hex_color": None,
+    "sub_categories": [],
+    "products": [],
+}
+```
+
+## CATEGORY API
+
+### LIST
+
+`categories/`
+
+### DETAILS
+
+`categories/{id}`
+
+#### Response
+
+```
+{
+    "id": str(self.category.id),
+    "created_at": self.category.created_at.strftime(
+        "%Y-%m-%dT%H:%M:%S.%fZ"
+    ),
+    "updated_at": self.category.updated_at.strftime(
+        "%Y-%m-%dT%H:%M:%S.%fZ"
+    ),
+    "name": self.category.name,
+    "image_url": None,
+    "hex_color": None,
+    "price": 123.12,
+}
+```
+
+## MENU API
+
+### LIST
+
+`menus/`
+
+### DETAILS
+
+`menus/{id}`
+
+#### Response
+
+```
+  {
+      "id": [uuid],
+      "created_at": str,
+      "updated_at": str,
+      "name": str,
+      "categories": [],
+      "products": [],
+      "start_date": None,
+      "end_date": None,
+  },
+```

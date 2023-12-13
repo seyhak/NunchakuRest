@@ -47,3 +47,15 @@ Go to `admin/`
 ## GIT POLICY
 
 https://www.conventionalcommits.org/en/v1.0.0/
+
+
+## LANGUAGES BACKEND
+in container `apk add gettext`
+
+`python manage.py makemessages -l <language_code>`
+
+`python manage.py makemessages -l en`
+
+`python manage.py makemessages -l pl`
+
+`python manage.py compilemessages`

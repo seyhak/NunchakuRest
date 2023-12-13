@@ -1,9 +1,11 @@
 ## Priority
-FE Welcome Page -> Login -> Django Admin Menu -> Roles -> prettier -> THEME -> Ordering -> Displaying -> github hooks -> ...
+FE Welcome Page -> Login -> Django Admin Menu -> Roles -> THEME -> Ordering -> Displaying -> github hooks -> ...
+
+!Deploy this sht: Adding Menu -> Ordering -> Displaying -> Deploy -> Upgrade
 
 ## Important
 
-[ ] Fix git hooks and linters
+[ ] pip install django-modeltranslation
 [x] Husky and githooks setup
 [x] Login
 [ ] Creating Roles - Admin, Manager, Employee, Client

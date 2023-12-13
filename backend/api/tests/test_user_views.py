@@ -1,16 +1,15 @@
 from django.test import TestCase
-
 from parameterized import parameterized
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient, APITestCase
-from django.contrib.auth.models import User
+
 from tests.factories.user import UserFactory
 
 
 class TestSignupViewSet(TestCase):
     def setUp(self):
-        self.url = reverse("signup")
+        self.url = reverse("api:signup")
         self.client = APIClient()
 
     def test_success(self):
@@ -82,20 +81,21 @@ class TestLoginViewSet(TestCase):
         self.user = UserFactory(username=self.data["username"])
         self.user.set_password(self.data["password"])
         self.user.save()
-        self.url = reverse("login")
+        self.url = reverse("api:login")
         self.client = APIClient()
 
     def test_success(self):
         response = self.client.post(self.url, self.data)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data,
+        self.assertEqual(
+            response.data,
             {
                 "username": "rrashley",
                 "first_name": "",
                 "last_name": "",
                 "email": "",
-            }
+            },
         )
 
     def test_wrong_password(self):
@@ -117,7 +117,7 @@ class TestChangePasswordViewSet(TestCase):
         self.user = UserFactory()
         self.user.set_password(self.data["password"])
         self.user.save()
-        self.url = reverse("change-password")
+        self.url = reverse("api:change-password")
         self.client = APIClient()
 
     def test_success(self):
@@ -153,19 +153,22 @@ class MeViewTests(APITestCase):
         }
         self.user = UserFactory(**self.data)
         self.client = APIClient()
-        self.url = reverse('me')
+        self.url = reverse("api:me")
 
     def test_me_view_with_authenticated_user(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, {
-            "username": "rrashley",
-            "first_name": "Ashley",
-            "last_name": "Raid",
-            "email": "rileyraid@xxx.com",
-        })
+        self.assertEqual(
+            response.data,
+            {
+                "username": "rrashley",
+                "first_name": "Ashley",
+                "last_name": "Raid",
+                "email": "rileyraid@xxx.com",
+            },
+        )
 
     def test_me_view_without_authentication(self):
         response = self.client.get(self.url)
@@ -177,7 +180,7 @@ class SessionLogoutViewTests(APITestCase):
     def setUp(self):
         self.user = UserFactory()
         self.client = APIClient()
-        self.url = reverse('logout')
+        self.url = reverse("api:logout")
 
     def test_success(self):
         self.client.force_authenticate(user=self.user)
