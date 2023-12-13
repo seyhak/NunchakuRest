@@ -1,16 +1,16 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .serializers import (
+    ChangePasswordSerializer,
     SessionAuthenticationSerializer,
     SignupSerializer,
-    ChangePasswordSerializer,
     UserSerializer,
 )
 
@@ -87,8 +87,5 @@ class MeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        from django.middleware.csrf import get_token
-        csrf_token = get_token(request)
-
         user_data = UserSerializer(request.user).data
-        return Response(data={**user_data, "chuj": csrf_token})
+        return Response(data={**user_data})

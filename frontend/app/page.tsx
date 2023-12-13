@@ -2,8 +2,8 @@ import { Icon, Typography } from "@mui/material"
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
 import "./page.sass"
 import Script from "next/script"
-import { IntroSection } from "./(components)/IntroSection/IntroSection"
-import { ContactSection } from "./(components)/ContactSection/ContactSection"
+import { IntroSection } from "./components/IntroSection/IntroSection"
+import { ContactSection } from "./components/ContactSection/ContactSection"
 
 function reveal() {
   const ELEMENT_VISIBLE_THRESHOLD = 200
