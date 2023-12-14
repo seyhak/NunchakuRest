@@ -3,16 +3,16 @@ import hashString from "@/utils/crypto"
 import { useForm } from "react-hook-form"
 import {useCustomSWR} from "@/utils/use-swr"
 import { User } from "@/types/user"
-import { loginFetcher, signUpFetcher, logoutFetcher } from "@/axios/user"
+import { loginFetcher, signUpFetcher } from "@/fetchers/user"
 import { AxiosError } from "axios"
 import { useUser } from "@/providers/user-provider"
+import { useSnackbar } from "@/providers/snackbar-provider"
+import { useLoginManagerDrawer } from "./useLoginManagerDrawer"
+
 
 type FormData = {
   password: string;
 } & User;
-
-import { useSnackbar } from "@/providers/snackbar-provider"
-
 
 export enum LoginManagerStates {
   LOGIN,
@@ -24,11 +24,11 @@ type LoginManagerStatesValues =
 
 export const useLoginManager = () => {
   const [isLoading, setIsLoading] = React.useState(false)
-  const [isUserDrawerOpen, setUserDrawerOpen] = React.useState(false)
   const [open, setOpen] = React.useState(false)
   const [errorMsg, setErrorMsg] = React.useState("")
   const [loginManagerState, setLoginManagerState] =
     React.useState<LoginManagerStatesValues>(LoginManagerStates.LOGIN)
+  const drawerState = useLoginManagerDrawer()
 
   const {isLoading: isUserLoading, refreshData: refreshMe, data: meData } = useCustomSWR<User>("/api/me/", {
     revalidateIfStale: false,
@@ -85,19 +85,6 @@ export const useLoginManager = () => {
       })
     },
     []
-  )
-  const toggleDrawer = React.useCallback(() => {
-    setUserDrawerOpen(prevState => !prevState)
-  }, [setUserDrawerOpen])
-
-  const handleLogout = React.useCallback(
-    async () => {
-      await logoutFetcher()
-      toggleDrawer()
-      userContext.setUser(null)
-      snackbarContext.showMessage("Logout successful!")
-    },
-    [toggleDrawer, snackbarContext, userContext]
   )
 
   const handleSignUp = React.useCallback(
@@ -166,9 +153,7 @@ export const useLoginManager = () => {
     user: userContext.user,
     isLoading: isLoading || isUserLoading,
     drawer: {
-      isUserDrawerOpen,
-      toggleDrawer,
-      handleLogout
+      ...drawerState
     }
   }
 }

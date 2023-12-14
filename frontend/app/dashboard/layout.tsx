@@ -14,9 +14,6 @@ export default function DashboardLayout({
 }) {
   return (
     <main className={classNames(montserrat.className, "dashboard-main")}>
-      <nav>
-        <LoginManager/>
-      </nav>
       {children}
     </main>
   )

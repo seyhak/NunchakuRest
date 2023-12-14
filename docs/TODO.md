@@ -5,6 +5,7 @@ FE Welcome Page -> Login -> Django Admin Menu -> Roles -> THEME -> Ordering -> D
 
 ## Important
 
+[ ] add possibility many nested categories with self excluded
 [ ] pip install django-modeltranslation
 [x] Husky and githooks setup
 [x] Login
@@ -20,6 +21,7 @@ FE Welcome Page -> Login -> Django Admin Menu -> Roles -> THEME -> Ordering -> D
 
 ## Major
 
+[ ] Idle state for kiosk
 [ ] github hooks
 [ ] Add theme (after API) https://mui.com/material-ui/guides/next-js-app-router/
 [ ] Managing store state

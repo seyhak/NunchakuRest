@@ -3,7 +3,7 @@ import axios from "axios"
 import useSWR, { Fetcher, SWRConfiguration } from "swr"
 import { convertKeysToCamelCase } from "./case-converters"
 import getCookie from "./get-cookie"
-import axiosInstance from "@/axios/axios"
+import axiosInstance from "@/fetchers/axios"
 
 export const usrFetcher = async (url: string) => {
   const response = await axiosInstance.get(url)

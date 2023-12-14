@@ -1,8 +1,6 @@
 import uuid
-from datetime import datetime
 
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxValueValidator
 from django.db import models
 
 
@@ -41,7 +39,11 @@ class Category(TimestampedModel, UUIDModel):
         max_length=7, blank=True, null=True, help_text="Hex color code, e.g., #RRGGBB"
     )
     sub_categories = models.ManyToManyField(
-        "self", blank=True, symmetrical=False, related_name="parent_category"
+        "self",
+        blank=True,
+        symmetrical=False,
+        related_name="parent_category",
+        limit_choices_to=~models.Q(id=models.F("id")),
     )
     products = models.ManyToManyField(Product, blank=True, related_name="category")
 
@@ -62,3 +64,14 @@ class Menu(TimestampedModel, UUIDModel):
 
     def __str__(self):
         return self.name
+
+
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
+
+
+@receiver(m2m_changed, sender=Category.sub_categories.through)
+def chuj(sender, instance, action, reverse, model, pk_set, **kwargs):
+    if action == "post_add" or action == "post_remove" or action == "post_clear":
+        print(model, kwargs, instance)
+        print(f"Authors of the book '{instance.title}' have been changed.")
