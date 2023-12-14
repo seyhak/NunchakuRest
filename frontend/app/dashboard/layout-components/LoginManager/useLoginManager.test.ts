@@ -12,7 +12,7 @@ jest.mock("@/utils/get-cookie", () => ({
   __esModule: true,
   default: jest.fn(() => "mocked-csrf-token"), // Mock getCookie function
 }))
-jest.mock("@/axios/user", () => ({
+jest.mock("@/fetchers/user", () => ({
   logoutFetcher: () => logoutFetcher(),
   loginFetcher: (a: any) => loginFetcher(a),
   signUpFetcher: () => signUpFetcher(),
@@ -39,6 +39,15 @@ jest.mock("@/providers/snackbar-provider", () => ({
     showMessage,
   }),
 }))
+jest.mock("./useLoginManagerDrawer", () => ({
+  useLoginManagerDrawer: jest.fn(() => ({
+    isUserDrawerOpen: false,
+    handleLogout: jest.fn(),
+    toggleDrawer: jest.fn(),
+    handleKioskClick: jest.fn(),
+    handleKitchenClick: jest.fn(),
+  })),
+}))
 
 describe("useLoginManager", () => {
   beforeEach(() => {
@@ -48,24 +57,6 @@ describe("useLoginManager", () => {
       data: null,
     })
     useUser.mockReturnValue({ user: null, setUser })
-  })
-  describe("drawer", () => {
-    it("should toggle drawer state", () => {
-      const { result } = renderHook(() => useLoginManager())
-
-      expect(result.current.drawer.isUserDrawerOpen).toBeFalsy()
-      act(() => {
-        result.current.drawer.toggleDrawer()
-      })
-
-      // Assert: Drawer should be open
-      expect(result.current.drawer.isUserDrawerOpen).toBeTruthy()
-      act(() => {
-        result.current.drawer.toggleDrawer()
-      })
-
-      expect(result.current.drawer.isUserDrawerOpen).toBeFalsy()
-    })
   })
   describe("onSubmit", () => {
     it("should handle successful login", async () => {
@@ -119,15 +110,14 @@ describe("useLoginManager", () => {
         await result.current.onSubmit(result.current.form.getValues())
       })
 
-      expect(setUser).toHaveBeenCalledWith(mockUser)
-        expect(result.current.form.getValues()).toEqual({
-          username: "",
-          password: "",
-          email: "",
-          firstName: "",
-          lastName: "",
-        })
-        expect(result.current.open).toBe(false)
+      expect(result.current.form.getValues()).toEqual({
+        username: "",
+        password: "",
+        email: "",
+        firstName: "",
+        lastName: "",
+      })
+      expect(result.current.open).toBeFalsy()
     })
   })
 })

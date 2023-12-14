@@ -1,6 +1,7 @@
 {
   "extends": ["next", "prettier"],
   "rules": {
-    "semi": [1, "never"]
+    "semi": [1, "never"],
+    "no-unused-vars": "warn"
   }
 }

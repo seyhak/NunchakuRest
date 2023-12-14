@@ -52,7 +52,7 @@ export function LoginManager(props: LoginManagerProps) {
       {isSignedIn ? <>
       <IconButton onClick={drawer.toggleDrawer}>
         <Avatar>
-          {`${user.firstName[0]}${user.lastName[1]}`.toUpperCase()}
+          {`${user.firstName[0] || ""}${user.lastName[1] || ""}`.toUpperCase()}
         </Avatar>
       </IconButton>
       <Drawer
@@ -61,6 +61,8 @@ export function LoginManager(props: LoginManagerProps) {
             open={drawer.isUserDrawerOpen}
             onClose={drawer.toggleDrawer}
           >
+            <Button onClick={drawer.handleKioskClick}>Kiosk</Button>
+            <Button onClick={drawer.handleKitchenClick}>Kitchen</Button>
             <Button onClick={drawer.handleLogout}>Log out</Button>
           </Drawer>
       </>:

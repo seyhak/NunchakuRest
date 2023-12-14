@@ -3,28 +3,31 @@ import {
   convertKeysToCamelCase,
 } from "@/utils/case-converters"
 import getCookie from "@/utils/get-cookie"
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders } from "axios"
-// import { cookies } from 'next/headers'
-// Create an Axios instance
+import axios, {
+  AxiosInstance,
+} from "axios"
+
 const axiosInstance: AxiosInstance = axios.create()
 
-axiosInstance.defaults.xsrfHeaderName = "X-CSRFToken";
-axiosInstance.defaults.xsrfCookieName = "csrftoken";
+axiosInstance.defaults.xsrfHeaderName = "X-CSRFToken"
+axiosInstance.defaults.xsrfCookieName = "csrftoken"
+
 // Add a request interceptor
 axiosInstance.interceptors.request.use((config) => {
   if (config.headers) {
     if (config.method === "post" && config.headers) {
       const csrfToken = getCookie("csrftoken")
-      const headers = {...config.headers, "X-CSRFToken": csrfToken!, "HTTP_X_CSRFTOKEN": csrfToken!}
+      const headers = {
+        ...config.headers,
+        "X-CSRFToken": csrfToken!,
+        HTTP_X_CSRFTOKEN: csrfToken!,
+      }
       config.headers = headers as any
+      console.log({ config })
     }
   }
   if (config.data) {
-    console.log('cd1', config
-    )
     config.data = convertKeysToSnakeCase(config.data)
-    console.log('cd2', config.data
-    )
   }
   return config
 })
