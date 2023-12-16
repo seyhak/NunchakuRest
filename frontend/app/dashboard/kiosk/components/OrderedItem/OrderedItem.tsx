@@ -5,6 +5,7 @@ import "./OrderedItem.sass"
 
 export type OrderedItemProps = {
   orderedProduct: OrderedProduct;
+  // eslint-disable-next-line
   handleClick?: (item: OrderedProduct) => void;
 };
 export const OrderedItem = ({ orderedProduct, handleClick }: OrderedItemProps) => {
