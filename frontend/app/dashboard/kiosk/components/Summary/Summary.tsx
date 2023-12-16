@@ -15,6 +15,7 @@ export type SummaryProps = {
     onConfirmClick: any
     onCancelClick: any
     sum: number
+    // eslint-disable-next-line
     handleProductRemove: (item: OrderedProduct) => void
   },
 }

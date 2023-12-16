@@ -20,7 +20,8 @@ import "./LoginManager.sass"
 export type LoginManagerProps = {
   open: boolean;
   selectedValue: string;
-  onClose: (value: string) => void;
+  // eslint-disable-next-line
+  onClose: (value: string) => void; // eslint-ignore
 };
 
 const STATE_MESSAGES = {
