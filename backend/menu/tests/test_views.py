@@ -1,13 +1,23 @@
 import json
+from datetime import date
+from unittest import mock
+from uuid import uuid4
 
 from django.urls import reverse
 from django.utils.translation import activate
+from freezegun import freeze_time
 from parameterized import parameterized
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from menu.models import Category, Menu, Product
-from tests.factories.menu import CategoryFactory, MenuFactory, ProductFactory
+from menu.models import Category, Menu, Order, Product
+from menu.views import OrderViewSet
+from tests.factories.menu import (
+    CategoryFactory,
+    MenuFactory,
+    OrderFactory,
+    ProductFactory,
+)
 from tests.factories.user import UserFactory
 
 
@@ -243,3 +253,202 @@ class TestCategoryViewSet(APITestCase):
                 "products": [],
             },
         )
+
+
+@freeze_time("2022-01-14 12:45:01.0002", tz_offset=1)
+class TestOrdersViewSet(APITestCase):
+    def setUp(self):
+        self.user = UserFactory()
+        self.client.force_login(self.user)
+        self.order = OrderFactory()
+
+    def test_orders_list(self):
+        OrderFactory()
+        OrderFactory()
+        url = reverse("menu:orders-list")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), Order.objects.count())
+
+    def test_orders_detail(self):
+        url = reverse("menu:orders-detail", args=[self.order.id])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = json.dumps(response.data)
+        data = json.loads(data)
+        self.assertDictEqual(
+            data,
+            {
+                "id": str(self.order.id),
+                "created_at": self.order.created_at.isoformat(),
+                "delivery_method": "HR",
+                "order_id": "22/01/14-13:45:01-0",
+                "products": [],
+                "payment_method": "CS",
+                "is_paid": False,
+            },
+        )
+
+    def test_orders_create(self):
+        product_1 = ProductFactory()
+        product_2 = ProductFactory()
+        product_3 = ProductFactory()
+
+        data = {
+            "products": [
+                {
+                    "id": str(product_1.id),
+                    "amount": 10,
+                },
+                {
+                    "id": str(product_2.id),
+                    "amount": 15,
+                },
+                {
+                    "id": str(product_3.id),
+                    "amount": 50,
+                },
+            ]
+        }
+        url = reverse("menu:orders-list")
+        with self.assertNumQueries(12):  # to optimize
+            response = self.client.post(url, data, format="json")
+
+        data = json.loads(json.dumps(response.data))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(type(response.data["id"]) is str)
+        self.assertDictEqual(
+            data,
+            {
+                "id": mock.ANY,
+                "products": [
+                    {
+                        "id": str(product_1.id),
+                        "amount": 10,
+                    },
+                    {
+                        "id": str(product_2.id),
+                        "amount": 15,
+                    },
+                    {
+                        "id": str(product_3.id),
+                        "amount": 50,
+                    },
+                ],
+                "order_id": "22/01/14-13:45:01-1",
+                "payment_method": "CS",
+                "is_paid": False,
+                "delivery_method": "HR",
+                "created_at": "2022-01-14T13:45:01.000200+00:00",
+            },
+        )
+
+    def test_orders_create_product_doesnt_exist(self):
+        product_1 = ProductFactory()
+        product_2 = ProductFactory()
+
+        data = {
+            "products": [
+                {
+                    "id": str(product_1.id),
+                    "amount": 10,
+                },
+                {
+                    "id": str(product_2.id),
+                    "amount": 15,
+                },
+                {
+                    "id": str(uuid4()),
+                    "amount": 50,
+                },
+            ]
+        }
+        url = reverse("menu:orders-list")
+        response = self.client.post(url, data, format="json")
+
+        data = json.loads(json.dumps(response.data))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            data, {"products": ["Some of requested products don't exist!"]}
+        )
+
+    @parameterized.expand(
+        [
+            (
+                {"id": str(uuid4())},
+                {
+                    "products": [
+                        {},
+                        {},
+                        {"amount": ["This field is required."]},
+                    ]
+                },
+            ),
+            (
+                {"amount": 10},
+                {
+                    "products": [
+                        {},
+                        {},
+                        {"id": ["This field is required."]},
+                    ]
+                },
+            ),
+        ]
+    )
+    def test_orders_create_missing_required_field(
+        self, product_with_missing_params, expected
+    ):
+        product_1 = ProductFactory()
+        product_2 = ProductFactory()
+
+        data = {
+            "products": [
+                {
+                    "id": str(product_1.id),
+                    "amount": 10,
+                },
+                {
+                    "id": str(product_2.id),
+                    "amount": 15,
+                },
+                product_with_missing_params,
+            ]
+        }
+        url = reverse("menu:orders-list")
+        response = self.client.post(url, data, format="json")
+
+        data = json.loads(json.dumps(response.data))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(data, expected)
+
+    def test_orders_delete(self):
+        url = reverse("menu:orders-detail", args=[self.order.id])
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_orders_patch(self):
+        url = reverse("menu:orders-detail", args=[self.order.id])
+        data = {"order_id": "babcia"}
+        response = self.client.patch(url, data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_orders_put(self):
+        url = reverse("menu:orders-detail", args=[self.order.id])
+        data = {"order_id": "babcia"}
+        response = self.client.put(url, data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_orders_finish_order(self):
+        url = reverse("menu:orders-finish-order", args=[self.order.id])
+        response = self.client.patch(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.finished_at, date(2022, 1, 14))

@@ -8,6 +8,10 @@ is an app for managing client cards with loyality stamps. Basic assumptions:
 * PostgreSQL
 * Black
 
+### ADDITIONAL DEPENDENCIES:
+
+* https://github.com/spulec/freezegun
+
 ## CREATE SUPERUSER ##
 ```
 1. get inside container

@@ -57,9 +57,6 @@ services:
       #   condition: service_started
       postgres:
         condition: service_healthy
-        interval: 3s
-        timeout: 5s
-        retries: 5
     restart: on-failure
     links:
       - postgres

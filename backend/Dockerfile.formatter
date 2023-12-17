@@ -7,6 +7,9 @@ RUN pip install --no-cache-dir pip install black isort autoflake
 COPY . .
 
 # RUN [ "autoflake", "."]
+# autoflake .
+# isort .
+# black .
 # RUN [ "isort", "."]
 # RUN [ "black", "."]
 CMD [ "python"]
