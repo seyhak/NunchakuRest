@@ -1,7 +1,7 @@
 from factory import fuzzy
 from factory.django import DjangoModelFactory
 
-from menu.models import Category, Menu, Product
+from menu.models import Category, Menu, Order, Product, ProductInOrderAmount
 
 
 class ProductFactory(DjangoModelFactory):
@@ -24,3 +24,13 @@ class MenuFactory(DjangoModelFactory):
 
     class Meta:
         model = Menu
+
+
+class OrderFactory(DjangoModelFactory):
+    class Meta:
+        model = Order
+
+
+class ProductInOrderAmountFactory(DjangoModelFactory):
+    class Meta:
+        model = ProductInOrderAmount

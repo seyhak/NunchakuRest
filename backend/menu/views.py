@@ -1,8 +1,15 @@
-from rest_framework import viewsets
+from django.utils import timezone
+from rest_framework import decorators, mixins, status, viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-from .models import Category, Menu, Product
-from .serializers import CategorySerializer, MenuSerializer, ProductSerializer
+from .models import Category, Menu, Order, Product
+from .serializers import (
+    CategorySerializer,
+    MenuSerializer,
+    OrderSerializer,
+    ProductSerializer,
+)
 
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
@@ -21,3 +28,32 @@ class MenuViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
+
+
+class OrderViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    # mixins.UpdateModelMixin,
+    #    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    permission_classes = [IsAuthenticated]
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    # def get_serializer_class(self):
+    #     if self.request.method == "PATCH":
+    #         return None
+    #     return self.serializer_class
+
+    @decorators.action(
+        url_name="finish-order", detail=True, methods=["patch"], url_path="finish-order"
+    )
+    def finish_order(self, request, pk=None):
+        order = self.get_object()
+        order.finished_at = timezone.now()
+        order.save()
+        serializer = self.get_serializer(order)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
