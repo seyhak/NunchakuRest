@@ -1,12 +1,10 @@
 "use client"
-import { User } from "@/types/user"
 import {
   createContext,
   useContext,
   useCallback,
   ReactNode,
   useState,
-  useEffect,
 } from "react"
 
 import Snackbar from "@mui/material/Snackbar"
