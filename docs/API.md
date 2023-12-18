@@ -228,3 +228,84 @@ Changes the password of the authenticated user.
       "end_date": None,
   },
 ```
+
+## ORDER API
+
+### LIST
+
+`orders/`
+
+### DETAILS
+
+`orders/{id}`
+
+#### Response
+
+```
+  {
+    "id": UUID,
+    "created_at": date,
+    "delivery_method": "HR" | "TA",
+    "order_id": str,
+    "products": dict,
+    "payment_method": "CS",
+    "is_paid": bool,
+  },
+```
+### CREATE
+
+`POST orders/`
+
+#### Payload
+```
+{
+    "products": {
+        "id": UUID,
+        "amount": number
+    },
+    "delivery_method": str from enum,
+    "payment_method": str from enum
+}
+```
+
+#### Response
+```
+{
+    "id": mock.ANY,
+    "products": [
+        {
+            "id": str(product_1.id),
+            "amount": 10,
+        },
+        {
+            "id": str(product_2.id),
+            "amount": 15,
+        },
+        {
+            "id": str(product_3.id),
+            "amount": 50,
+        },
+    ],
+    "order_id": str,
+    "payment_method": str from enum,
+    "is_paid": bool,
+    "delivery_method": str from enum,
+    "created_at": str,
+}
+```
+
+### FINISH ORDER
+
+`PATCH orders/{id}/finish-order/`
+
+#### Payload
+```
+{
+    "products": {
+        "id": UUID,
+        "amount": number
+    },
+    "delivery_method": str from enum,
+    "payment_method": str from enum
+}
+```

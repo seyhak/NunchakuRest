@@ -1,5 +1,6 @@
 import { UUID } from "crypto"
 import { Timestamped } from "./common"
+import { ValuesOf } from "./global";
 
 export type Product = {
   id: UUID;
@@ -15,7 +16,7 @@ export type Category = {
 } & Timestamped;
 
 export type Menu = {
-  id: "ab362715-3a2f-48d8-82ac-b028ac101880";
+  id: UUID;
   categories: Category[];
   products: Product[];
   name: string;
@@ -26,10 +27,37 @@ export type Menu = {
 export type OrderedProduct = {
   name: string;
   price: string;
+  id: UUID;
   amount: number;
 };
 
 export enum KioskPages {
   MENU,
   PAYMENT,
+}
+export type KioskPagesValues = ValuesOf<typeof KioskPages>
+
+export type OrderProduct = {
+  id: UUID
+  amount: number
+}
+
+export enum PaymentMethods {
+  CASH = "CS",
+  BLIK = "BL"
+}
+
+export enum DeliveryMethods {
+  HERE = "HR",
+  TAKE_AWAY = "TA"
+}
+
+export type Order = {
+  id: UUID;
+  products: OrderProduct[]
+  orderId: string
+  paymentMethod: typeof PaymentMethods[keyof typeof PaymentMethods]
+  isPaid: boolean
+  deliveryMethod: typeof DeliveryMethods[keyof typeof DeliveryMethods]
+  createdAt: Date
 }

@@ -75,9 +75,9 @@ def order_id_default():
     last_order_of_the_day = Order.objects.filter(
         created_at__date=timezone.now().date()
     ).count()
-    order_id_modulo = last_order_of_the_day % MAX_ORDER_ID
-    date_time = timezone.now().strftime("%y/%m/%d-%H:%M:%S")
-    id = f"{date_time}-{order_id_modulo}"
+    order_id_modulo = (last_order_of_the_day % MAX_ORDER_ID) + 1
+    # date_time = timezone.now().strftime("%H%M")
+    id = f"{order_id_modulo:04}"
     return id
 
 

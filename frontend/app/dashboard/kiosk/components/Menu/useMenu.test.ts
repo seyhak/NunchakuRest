@@ -52,7 +52,7 @@ describe("useMenu", () => {
 
     // Assert: Ensure ordered products are updated
     expect(result.current.drawer.orderedProducts).toEqual({
-      "Huge Dildo": { amount: 1, name: "Huge Dildo", price: "10.99" },
+      "Huge Dildo": { amount: 1, name: "Huge Dildo", price: "10.99", id: "123" },
     })
     // second click
     await act(() => {
@@ -64,7 +64,7 @@ describe("useMenu", () => {
 
     // Assert: Ensure ordered products are updated
     expect(result.current.drawer.orderedProducts).toEqual({
-      "Huge Dildo": { amount: 2, name: "Huge Dildo", price: "10.99" },
+      "Huge Dildo": { amount: 2, name: "Huge Dildo", price: "10.99", id: "123" },
     })
 
     // third click
@@ -76,11 +76,12 @@ describe("useMenu", () => {
     expect(result.current.drawer.sum).toEqual(32.67)
 
     expect(result.current.drawer.orderedProducts).toEqual({
-      "Huge Dildo": { amount: 2, name: "Huge Dildo", price: "10.99" },
+      "Huge Dildo": { amount: 2, name: "Huge Dildo", price: "10.99", id: "123" },
       "Huge Dildo BLACK Turbo Spiral Destroyer": {
         amount: 1,
         name: "Huge Dildo BLACK Turbo Spiral Destroyer",
         price: "10.69",
+        id: "1234"
       },
     })
   })
@@ -98,9 +99,10 @@ describe("useMenu", () => {
     expect(result.current.drawer.sum).toEqual(32.67)
 
     expect(result.current.drawer.orderedProducts).toEqual({
-      "Huge Dildo": { amount: 2, name: "Huge Dildo", price: "10.99" },
+      "Huge Dildo": { amount: 2, name: "Huge Dildo", price: "10.99", id: "123", },
       "Huge Dildo BLACK Turbo Spiral Destroyer": {
         amount: 1,
+        id: "1234",
         name: "Huge Dildo BLACK Turbo Spiral Destroyer",
         price: "10.69",
       },
@@ -112,9 +114,10 @@ describe("useMenu", () => {
     expect(result.current.drawer.sum).toEqual(21.68)
 
     expect(result.current.drawer.orderedProducts).toEqual({
-      "Huge Dildo": { amount: 1, name: "Huge Dildo", price: "10.99" },
+      "Huge Dildo": { amount: 1, name: "Huge Dildo", price: "10.99",  id: "123" },
       "Huge Dildo BLACK Turbo Spiral Destroyer": {
         amount: 1,
+        id: "1234",
         name: "Huge Dildo BLACK Turbo Spiral Destroyer",
         price: "10.69",
       },

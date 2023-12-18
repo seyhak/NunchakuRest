@@ -1,34 +1,21 @@
-import { Loader } from "@/components/Loader/Loader"
+import { PaymentMethods as PaymentMethodsType} from "@/types/menu"
 import { Button } from "@mui/material"
-import { useState } from "react"
 
-const usePaymentMethods = ( ) => {
-  const [isLoading, setLoading] = useState(false) 
-  const handlePayBlik = async () => {
-    const payment = await new Promise((resolve, reject) => {
-      setLoading(true)
-      setTimeout(() => {
-        setLoading(false)
-        resolve(null)
-        // send ordered Stuff to backend
-        // show Order ID
-        // 
-      }, 2000)
-    })
-  }
-  return {
-    handlePayBlik,
-    isLoading
-  }
+type PaymentMethodsProps = {
+  handlePay: (paymentMethod: PaymentMethodsType) => Promise<void>
 }
-export const PaymentMethods = () => {
-  const {handlePayBlik, isLoading} = usePaymentMethods()
+export const PaymentMethods = ({
+  handlePay
+}: PaymentMethodsProps) => {
+
   return (
     <div className="payment-methods">
-      {isLoading ? <Loader/> : 
-      <Button onClick={handlePayBlik} variant="contained" size="large">
+      <Button onClick={() => handlePay(PaymentMethodsType.BLIK)} variant="contained" size="large">
         Blik
-      </Button>}
+      </Button>
+      <Button onClick={() => handlePay(PaymentMethodsType.CASH)} variant="contained" size="large">
+        Cash
+      </Button>
     </div>
   )
 }

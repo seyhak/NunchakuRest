@@ -35,7 +35,7 @@ const handleSettingOrderedProducts = (
   }
   return {
     ...prevState,
-    [item.name]: { name: item.name, price: item.price, amount: newAmount },
+    [item.name]: { name: item.name, price: item.price, amount: newAmount, id: item.id },
   }
 }
 
