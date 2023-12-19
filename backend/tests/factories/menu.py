@@ -32,5 +32,7 @@ class OrderFactory(DjangoModelFactory):
 
 
 class ProductInOrderAmountFactory(DjangoModelFactory):
+    amount = fuzzy.FuzzyInteger(1, 9999)
+
     class Meta:
         model = ProductInOrderAmount

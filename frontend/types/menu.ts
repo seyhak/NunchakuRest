@@ -61,3 +61,11 @@ export type Order = {
   deliveryMethod: typeof DeliveryMethods[keyof typeof DeliveryMethods]
   createdAt: Date
 }
+
+export type ProductInOrdersDisplay = {
+  name: string
+} & OrderProduct
+
+export type OrderInOrdersDisplay = {
+  products: ProductInOrdersDisplay[]
+} & Order

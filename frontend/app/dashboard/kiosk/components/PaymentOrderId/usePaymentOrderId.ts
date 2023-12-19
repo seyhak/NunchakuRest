@@ -11,11 +11,10 @@ export const usePaymentOrderId = (setPage: ReturnType<typeof useKiosk>['pageStat
   const redirectToKioskAfterCountdown = useCallback(async (countdown: number) => {
     setTimeout(() => {
       setCounter(prevState => prevState - 1)
+      if(countdown === 0) {
+        setPage(KioskPages.MENU)
+      }
     }, 1000)
-
-    if(countdown === 0) {
-      setPage(KioskPages.MENU)
-    }
   }, [setCounter, setPage])
 
   useEffect(() => {

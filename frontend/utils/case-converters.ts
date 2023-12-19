@@ -1,7 +1,8 @@
 import { camelCase, isPlainObject, snakeCase } from "lodash"
 
 const convertCase = (data: object, converter: (key: string) => string): {[key:string]: any} => {
-  return Object.fromEntries(
+  const isArray = Array.isArray(data)
+  const returnValue = Object.fromEntries(
     Object.entries(data).map(([key, value]) => {
       if(isPlainObject(value)) {
         return [converter(key), convertCase(value, converter)]
@@ -13,6 +14,7 @@ const convertCase = (data: object, converter: (key: string) => string): {[key:st
       return [converter(key), value]
     })
   )
+  return isArray ? Object.values(returnValue) : returnValue
 }
 export const convertKeysToCamelCase = (data: object): {[key:string]: any} => {
   return convertCase(data, camelCase)

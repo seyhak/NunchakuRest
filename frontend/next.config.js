@@ -1,12 +1,13 @@
 /** @type {import('next').NextConfig} */
 
-module.exports = {
+const path = require("path");
 
-  reactStrictMode: true,
+module.exports = {
+  reactStrictMode: false,
   async rewrites() {
     return [
       {
-        source: '/api/:path*',
+        source: "/api/:path*",
         destination: `http://localhost:8000/api/:path*/`,
       },
     ];
@@ -14,11 +15,12 @@ module.exports = {
   async headers() {
     return [
       {
-        source: '/api/:path*',
-        headers: [
-          { key: 'Host', value: 'localhost:8000' },
-        ],
+        source: "/api/:path*",
+        headers: [{ key: "Host", value: "localhost:8000" }],
       },
     ];
+  },
+  sassOptions: {
+    includePaths: [path.join(__dirname, "app")],
   },
 };

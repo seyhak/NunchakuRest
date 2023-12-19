@@ -11,12 +11,12 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from menu.models import Category, Menu, Order, Product
-from menu.views import OrderViewSet
 from tests.factories.menu import (
     CategoryFactory,
     MenuFactory,
     OrderFactory,
     ProductFactory,
+    ProductInOrderAmountFactory
 )
 from tests.factories.user import UserFactory
 
@@ -272,6 +272,18 @@ class TestOrdersViewSet(APITestCase):
         self.assertEqual(len(response.data), Order.objects.count())
 
     def test_orders_detail(self):
+        product_1 = ProductFactory()
+        product_2 = ProductFactory()
+        ProductInOrderAmountFactory(
+            product=product_1,
+            order=self.order,
+            amount=20
+        )
+        ProductInOrderAmountFactory(
+            product=product_2,
+            order=self.order,
+            amount=9
+        )
         url = reverse("menu:orders-detail", args=[self.order.id])
         response = self.client.get(url)
 
@@ -286,7 +298,17 @@ class TestOrdersViewSet(APITestCase):
                 "created_at": self.order.created_at.isoformat(),
                 "delivery_method": "HR",
                 "order_id": "0001",
-                "products": [],
+                "products": [
+                    {
+                        "id": str(product_1.id),
+                        "amount": 20,
+                        "name": str(product_1.name),
+                    },
+                    {
+                        "id": str(product_2.id),
+                        "amount": 9,
+                        "name": str(product_2.name),
+                    },],
                 "payment_method": "CS",
                 "is_paid": False,
             },
@@ -314,13 +336,13 @@ class TestOrdersViewSet(APITestCase):
             ]
         }
         url = reverse("menu:orders-list")
-        with self.assertNumQueries(12):  # to optimize
+        with self.assertNumQueries(9):  # to optimize
             response = self.client.post(url, data, format="json")
 
         data = json.loads(json.dumps(response.data))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(type(response.data["id"]) is str)
-        self.assertDictEqual(
+        self.assertEqual(
             data,
             {
                 "id": mock.ANY,
@@ -328,14 +350,17 @@ class TestOrdersViewSet(APITestCase):
                     {
                         "id": str(product_1.id),
                         "amount": 10,
+                        "name": str(product_1.name),
                     },
                     {
                         "id": str(product_2.id),
                         "amount": 15,
+                        "name": str(product_2.name),
                     },
                     {
                         "id": str(product_3.id),
                         "amount": 50,
+                        "name": str(product_3.name),
                     },
                 ],
                 "order_id": "0002",
