@@ -37,7 +37,7 @@ export const Menu = ({menu: { categories, products, name }, setPage, orderedProd
     <div
       className={classNames("menu", { "drawer-open": drawer.isDrawerOpened })}
     >
-      <Typography className="title">{name}</Typography>
+      {/* <Typography className="title">{name}</Typography> */}
       <div className="tiles">
         {openedCategories && <BackButton onClick={onBackArrowClick} />}
             {tiles.map((c) => (

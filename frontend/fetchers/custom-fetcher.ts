@@ -30,7 +30,6 @@ export const customFetcher = async <DataType>(
     } else {
       parsedData = convertKeysToCamelCase(data)
     }
-    console.log(parsedData)
     return parsedData as DataType
   } catch (error) {
     console.error("Error fetching data:", error)

@@ -1,7 +1,5 @@
 import React from "react"
-import axios from "axios"
-import useSWR, { Fetcher, SWRConfiguration } from "swr"
-import { convertKeysToCamelCase } from "./case-converters"
+import useSWR, { SWRConfiguration } from "swr"
 import getCookie from "./get-cookie"
 import axiosInstance from "@/fetchers/axios"
 

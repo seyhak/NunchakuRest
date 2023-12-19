@@ -61,7 +61,11 @@ class ProductInOrderAmountSerializer(serializers.ModelSerializer):
         model = ProductInOrderAmount
 
     def to_representation(self, instance):
-        return {"id": str(instance.product.id), "amount": instance.amount}
+        return {
+            "id": str(instance.product.id),
+            "amount": instance.amount,
+            "name": instance.product.name,
+        }
 
 
 class ProductInOrderAmountOfOrderSerializer(serializers.Serializer):
@@ -90,7 +94,11 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = ["products", "delivery_method", "payment_method"]
 
     def get_repr_products(self, instance):
-        products_in_order = list(ProductInOrderAmount.objects.filter(order=instance))
+        products_in_order = list(
+            ProductInOrderAmount.objects.filter(order=instance).select_related(
+                "product"
+            )
+        )
         return ProductInOrderAmountSerializer(products_in_order, many=True).data
 
     def create(self, validated_data):

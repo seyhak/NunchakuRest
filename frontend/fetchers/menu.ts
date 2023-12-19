@@ -1,12 +1,7 @@
 import { UUID } from "crypto";
 import axiosInstance from "./axios";
-import { DeliveryMethods, Order, PaymentMethods } from "@/types/menu";
+import { DeliveryMethods, Order, OrderInOrdersDisplay, OrderProduct, PaymentMethods } from "@/types/menu";
 
-
-type OrderProduct = {
-  id: UUID
-  amount: number
-}
 
 export type CreateOrderPayloadData = {
   products: OrderProduct[]
@@ -18,4 +13,14 @@ export const createOrderFetcher = async (data: CreateOrderPayloadData
 ) => {
   const response = await axiosInstance.post("/api/orders/", data)
   return response.data as Order
+}
+
+export const getOrdersFetcher = async () => {
+    const response = await axiosInstance.post("/api/orders/")
+    return response.data as OrderInOrdersDisplay[]
+  }
+
+export const patchFinalizeOrder = async (id: UUID) => {
+  const response = await axiosInstance.patch(`/api/orders/${id}/finish-order/`)
+  return response.data as any
 }

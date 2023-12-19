@@ -1,6 +1,8 @@
 import { PaymentMethods as PaymentMethodsType} from "@/types/menu"
 import { Button } from "@mui/material"
 
+import "./PaymentMethods.sass"
+
 type PaymentMethodsProps = {
   handlePay: (paymentMethod: PaymentMethodsType) => Promise<void>
 }

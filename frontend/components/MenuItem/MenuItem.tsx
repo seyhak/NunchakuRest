@@ -1,8 +1,9 @@
 'use client'
 import { Category, Product } from "@/types/menu"
-import { ButtonBase, Typography } from "@mui/material"
+import { Typography } from "@mui/material"
 import "./MenuItem.sass"
 import classNames from "classnames"
+import { TileButton } from "../TileButton/TileButton"
 
 
 export type MenuItemProps = {
@@ -12,7 +13,6 @@ export type MenuItemProps = {
 }
 const useMenuItem = (item: Category | Product, handleProductClick: (menuItem: Product) => void, handleCategoryClick: (category: Category) => void, isCategory: boolean) => {
   const onClick = () => {
-    console.log(isCategory)
     if(isCategory) {
       console.log("open", item)
       handleCategoryClick(item as Category)
@@ -29,15 +29,15 @@ export const MenuItem = ({menuItem, handleProductClick, handleCategoryClick}: Me
   const isCategory = typeof (menuItem as any).price !== "string"
   const {onClick} = useMenuItem(menuItem, handleProductClick, handleCategoryClick, isCategory)
   return (
-    <ButtonBase onClick={onClick} className={classNames("menu-item", isCategory && "category")}>
-      <div className="content">
+    <TileButton onClick={onClick} className={classNames("menu-item", isCategory && "category")}>
+      <>
         <Typography className="title">
           {menuItem.name}
         </Typography>
         {!isCategory && <Typography className="price">
           {(menuItem as Product).price}
         </Typography>}
-      </div>
-    </ButtonBase>
+      </>
+    </TileButton>
   )
 }
