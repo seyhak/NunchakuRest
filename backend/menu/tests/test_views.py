@@ -10,13 +10,17 @@ from parameterized import parameterized
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from menu.models import Category, Menu, Order, Product
+from menu.models import Category, Menu, MenuSet, Order, Product
 from tests.factories.menu import (
     CategoryFactory,
     MenuFactory,
+    MenuSetFactory,
+    MenuSetsInOrderAmountFactory,
+    MenuSetStepFactory,
+    OrderedProductsInMenuSetsOrderFactory,
     OrderFactory,
     ProductFactory,
-    ProductInOrderAmountFactory
+    ProductInOrderAmountFactory,
 )
 from tests.factories.user import UserFactory
 
@@ -72,6 +76,21 @@ class TestMenuViewSet(APITestCase):
         ]
     )
     def test_menu_detail_translate(self, lang, expected):
+        menu_set = MenuSetFactory()
+        menu_set_1 = MenuSetFactory()
+        step_1 = MenuSetStepFactory(menu_set=menu_set)
+        step_2 = MenuSetStepFactory(menu_set=menu_set)
+        product_1_1 = ProductFactory()
+        product_1_2 = ProductFactory()
+        product_2_1 = ProductFactory()
+        product_2_2 = ProductFactory()
+        product_2_3 = ProductFactory()
+        step_1.products.add(product_1_1)
+        step_1.products.add(product_1_2)
+        step_2.products.add(product_2_1)
+        step_2.products.add(product_2_2)
+        step_2.products.add(product_2_3)
+
         product_1 = ProductFactory(name="banana")
         product_2 = ProductFactory(name="apple")
         product_3_1 = ProductFactory(name="white cheese")
@@ -90,6 +109,8 @@ class TestMenuViewSet(APITestCase):
         self.menu.products.add(product_1)
         self.menu.products.add(product_2)
         self.menu.categories.add(category_1)
+        self.menu.menu_sets.add(menu_set)
+        self.menu.menu_sets.add(menu_set_1)
         self.menu.save()
         activate(lang)
         url = reverse("menu:menus-detail", args=[self.menu.id])
@@ -99,6 +120,7 @@ class TestMenuViewSet(APITestCase):
         # make all ordereddict dict
         data = json.dumps(response.data)
         data = json.loads(data)
+
         self.assertEqual(
             data,
             {
@@ -206,6 +228,94 @@ class TestMenuViewSet(APITestCase):
                         "price": str(product_2.price),
                     },
                 ],
+                "menu_sets": [
+                    {
+                        "id": str(menu_set.id),
+                        "name": menu_set.name,
+                        "set_steps": [
+                            {
+                                "name": step_1.name,
+                                "products": [
+                                    {
+                                        "id": str(product_1_1.id),
+                                        "created_at": product_1_1.created_at.strftime(
+                                            "%Y-%m-%dT%H:%M:%S.%fZ"
+                                        ),
+                                        "updated_at": product_1_1.updated_at.strftime(
+                                            "%Y-%m-%dT%H:%M:%S.%fZ"
+                                        ),
+                                        "name": str(product_1_1.name),
+                                        "image_url": None,
+                                        "hex_color": None,
+                                        "price": str(product_1_1.price),
+                                    },
+                                    {
+                                        "id": str(product_1_2.id),
+                                        "created_at": product_1_2.created_at.strftime(
+                                            "%Y-%m-%dT%H:%M:%S.%fZ"
+                                        ),
+                                        "updated_at": product_1_2.updated_at.strftime(
+                                            "%Y-%m-%dT%H:%M:%S.%fZ"
+                                        ),
+                                        "name": str(product_1_2.name),
+                                        "image_url": None,
+                                        "hex_color": None,
+                                        "price": str(product_1_2.price),
+                                    },
+                                ],
+                            },
+                            {
+                                "name": step_2.name,
+                                "products": [
+                                    {
+                                        "id": str(product_2_1.id),
+                                        "created_at": product_2_1.created_at.strftime(
+                                            "%Y-%m-%dT%H:%M:%S.%fZ"
+                                        ),
+                                        "updated_at": product_2_1.updated_at.strftime(
+                                            "%Y-%m-%dT%H:%M:%S.%fZ"
+                                        ),
+                                        "name": str(product_2_1.name),
+                                        "image_url": None,
+                                        "hex_color": None,
+                                        "price": str(product_2_1.price),
+                                    },
+                                    {
+                                        "id": str(product_2_2.id),
+                                        "created_at": product_2_2.created_at.strftime(
+                                            "%Y-%m-%dT%H:%M:%S.%fZ"
+                                        ),
+                                        "updated_at": product_2_2.updated_at.strftime(
+                                            "%Y-%m-%dT%H:%M:%S.%fZ"
+                                        ),
+                                        "name": str(product_2_2.name),
+                                        "image_url": None,
+                                        "hex_color": None,
+                                        "price": str(product_2_2.price),
+                                    },
+                                    {
+                                        "id": str(product_2_3.id),
+                                        "created_at": product_2_3.created_at.strftime(
+                                            "%Y-%m-%dT%H:%M:%S.%fZ"
+                                        ),
+                                        "updated_at": product_2_3.updated_at.strftime(
+                                            "%Y-%m-%dT%H:%M:%S.%fZ"
+                                        ),
+                                        "name": str(product_2_3.name),
+                                        "image_url": None,
+                                        "hex_color": None,
+                                        "price": str(product_2_3.price),
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        "id": str(menu_set_1.id),
+                        "name": menu_set_1.name,
+                        "set_steps": [],
+                    },
+                ],
                 "created_at": self.menu.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
                 "updated_at": self.menu.updated_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
                 "name": "Orange",
@@ -255,7 +365,6 @@ class TestCategoryViewSet(APITestCase):
         )
 
 
-@freeze_time("2022-01-14 12:45:01.0002", tz_offset=1)
 class TestOrdersViewSet(APITestCase):
     def setUp(self):
         self.user = UserFactory()
@@ -274,16 +383,39 @@ class TestOrdersViewSet(APITestCase):
     def test_orders_detail(self):
         product_1 = ProductFactory()
         product_2 = ProductFactory()
-        ProductInOrderAmountFactory(
-            product=product_1,
-            order=self.order,
-            amount=20
+        product_3 = ProductFactory()
+        product_4 = ProductFactory()
+        product_5 = ProductFactory()
+        ProductInOrderAmountFactory(product=product_1, order=self.order, amount=20)
+        ProductInOrderAmountFactory(product=product_2, order=self.order, amount=9)
+
+        menu_set = MenuSetFactory()
+        menu_set_step_1 = MenuSetStepFactory(menu_set=menu_set)
+        menu_set_step_1.products.add(product_1, product_2)
+        with freeze_time("2022-01-14 12:45:01.0002", tz_offset=1):
+            menu_set_in_order_1 = MenuSetsInOrderAmountFactory(
+                order=self.order, menu_set=menu_set, amount=2
+            )
+        with freeze_time("2022-01-14 12:45:01.0003", tz_offset=1):
+            menu_set_in_order_2 = MenuSetsInOrderAmountFactory(
+                order=self.order, menu_set=menu_set, amount=5
+            )
+        OrderedProductsInMenuSetsOrderFactory(
+            menu_set_in_order=menu_set_in_order_1, product=product_1
         )
-        ProductInOrderAmountFactory(
-            product=product_2,
-            order=self.order,
-            amount=9
+        OrderedProductsInMenuSetsOrderFactory(
+            menu_set_in_order=menu_set_in_order_1, product=product_2
         )
+        OrderedProductsInMenuSetsOrderFactory(
+            menu_set_in_order=menu_set_in_order_2, product=product_2
+        )
+        OrderedProductsInMenuSetsOrderFactory(
+            menu_set_in_order=menu_set_in_order_2, product=product_3
+        )
+        OrderedProductsInMenuSetsOrderFactory(
+            menu_set_in_order=menu_set_in_order_2, product=product_4
+        )
+
         url = reverse("menu:orders-detail", args=[self.order.id])
         response = self.client.get(url)
 
@@ -308,7 +440,22 @@ class TestOrdersViewSet(APITestCase):
                         "id": str(product_2.id),
                         "amount": 9,
                         "name": str(product_2.name),
-                    },],
+                    },
+                ],
+                "menu_sets": [
+                    {
+                        "id": str(menu_set.id),
+                        "name": menu_set.name,
+                        "amount": 2,
+                        "products": f"{product_1.name}, {product_2.name}",
+                    },
+                    {
+                        "id": str(menu_set.id),
+                        "name": menu_set.name,
+                        "amount": 5,
+                        "products": f"{product_2.name}, {product_3.name}, {product_4.name}",
+                    },
+                ],
                 "payment_method": "CS",
                 "is_paid": False,
             },
@@ -318,8 +465,28 @@ class TestOrdersViewSet(APITestCase):
         product_1 = ProductFactory()
         product_2 = ProductFactory()
         product_3 = ProductFactory()
+        menu_set = MenuSetFactory()
+        menu_set_step_1 = MenuSetStepFactory(menu_set=menu_set)
+        menu_set_step_2 = MenuSetStepFactory(menu_set=menu_set)
+        product_4 = ProductFactory()
+        product_5 = ProductFactory()
+        product_6 = ProductFactory()
+        menu_set_step_1.products.add(product_4, product_5)
+        menu_set_step_2.products.add(product_1, product_6)
 
         data = {
+            "menu_sets": [
+                {
+                    "id": str(menu_set.id),
+                    "amount": 2,
+                    "products": [{"id": str(product_4.id)}, {"id": str(product_1.id)}],
+                },
+                {
+                    "id": str(menu_set.id),
+                    "amount": 1,
+                    "products": [{"id": str(product_4.id)}, {"id": str(product_6.id)}],
+                },
+            ],
             "products": [
                 {
                     "id": str(product_1.id),
@@ -333,10 +500,10 @@ class TestOrdersViewSet(APITestCase):
                     "id": str(product_3.id),
                     "amount": 50,
                 },
-            ]
+            ],
         }
         url = reverse("menu:orders-list")
-        with self.assertNumQueries(9):  # to optimize
+        with self.assertNumQueries(18):  # to optimize
             response = self.client.post(url, data, format="json")
 
         data = json.loads(json.dumps(response.data))
@@ -346,6 +513,20 @@ class TestOrdersViewSet(APITestCase):
             data,
             {
                 "id": mock.ANY,
+                "menu_sets": [
+                    {
+                        "id": str(menu_set.id),
+                        "name": menu_set.name,
+                        "amount": 2,
+                        "products": f"{product_4.name}, {product_1.name}",
+                    },
+                    {
+                        "id": str(menu_set.id),
+                        "name": menu_set.name,
+                        "amount": 1,
+                        "products": f"{product_4.name}, {product_6.name}",
+                    },
+                ],
                 "products": [
                     {
                         "id": str(product_1.id),
@@ -367,7 +548,7 @@ class TestOrdersViewSet(APITestCase):
                 "payment_method": "CS",
                 "is_paid": False,
                 "delivery_method": "HR",
-                "created_at": "2022-01-14T13:45:01.000200+00:00",
+                "created_at": data["created_at"],
             },
         )
 
@@ -389,7 +570,8 @@ class TestOrdersViewSet(APITestCase):
                     "id": str(uuid4()),
                     "amount": 50,
                 },
-            ]
+            ],
+            "menu_sets": [],
         }
         url = reverse("menu:orders-list")
         response = self.client.post(url, data, format="json")
@@ -441,7 +623,8 @@ class TestOrdersViewSet(APITestCase):
                     "amount": 15,
                 },
                 product_with_missing_params,
-            ]
+            ],
+            "menu_sets": [],
         }
         url = reverse("menu:orders-list")
         response = self.client.post(url, data, format="json")
@@ -470,6 +653,7 @@ class TestOrdersViewSet(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
+    @freeze_time("2022-01-14 12:45:01.0002", tz_offset=1)
     def test_orders_finish_order(self):
         url = reverse("menu:orders-finish-order", args=[self.order.id])
         response = self.client.patch(url)
@@ -477,3 +661,151 @@ class TestOrdersViewSet(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.order.refresh_from_db()
         self.assertEqual(self.order.finished_at, date(2022, 1, 14))
+
+
+class TestMenuSetViewSet(APITestCase):
+    def setUp(self):
+        user = UserFactory()
+        self.client.force_login(user)
+        self.product = ProductFactory()
+        self.menu_set = MenuSetFactory()
+
+    def test_menu_set_list(self):
+        step_1 = MenuSetStepFactory(menu_set=self.menu_set)
+        step_2 = MenuSetStepFactory(menu_set=self.menu_set)
+
+        product_1_1 = ProductFactory()
+        product_1_2 = ProductFactory()
+        product_2_1 = ProductFactory()
+        product_2_2 = ProductFactory()
+        product_2_3 = ProductFactory()
+        step_1.products.add(product_1_1)
+        step_1.products.add(product_1_2)
+        step_2.products.add(product_2_1)
+        step_2.products.add(product_2_2)
+        step_2.products.add(product_2_3)
+        url = reverse("menu:menu-sets-list")
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), MenuSet.objects.count())
+        data = json.loads(json.dumps(response.data))
+
+        self.assertEqual(
+            data,
+            [
+                {
+                    "id": str(self.menu_set.id),
+                    "name": self.menu_set.name,
+                    "set_steps": [
+                        {
+                            "name": step_1.name,
+                            "products": [
+                                {
+                                    "id": str(product_1_1.id),
+                                    "created_at": product_1_1.created_at.strftime(
+                                        "%Y-%m-%dT%H:%M:%S.%fZ"
+                                    ),
+                                    "updated_at": product_1_1.updated_at.strftime(
+                                        "%Y-%m-%dT%H:%M:%S.%fZ"
+                                    ),
+                                    "name": str(product_1_1.name),
+                                    "image_url": None,
+                                    "hex_color": None,
+                                    "price": str(product_1_1.price),
+                                },
+                                {
+                                    "id": str(product_1_2.id),
+                                    "created_at": product_1_2.created_at.strftime(
+                                        "%Y-%m-%dT%H:%M:%S.%fZ"
+                                    ),
+                                    "updated_at": product_1_2.updated_at.strftime(
+                                        "%Y-%m-%dT%H:%M:%S.%fZ"
+                                    ),
+                                    "name": str(product_1_2.name),
+                                    "image_url": None,
+                                    "hex_color": None,
+                                    "price": str(product_1_2.price),
+                                },
+                            ],
+                        },
+                        {
+                            "name": step_2.name,
+                            "products": [
+                                {
+                                    "id": str(product_2_1.id),
+                                    "created_at": product_2_1.created_at.strftime(
+                                        "%Y-%m-%dT%H:%M:%S.%fZ"
+                                    ),
+                                    "updated_at": product_2_1.updated_at.strftime(
+                                        "%Y-%m-%dT%H:%M:%S.%fZ"
+                                    ),
+                                    "name": str(product_2_1.name),
+                                    "image_url": None,
+                                    "hex_color": None,
+                                    "price": str(product_2_1.price),
+                                },
+                                {
+                                    "id": str(product_2_2.id),
+                                    "created_at": product_2_2.created_at.strftime(
+                                        "%Y-%m-%dT%H:%M:%S.%fZ"
+                                    ),
+                                    "updated_at": product_2_2.updated_at.strftime(
+                                        "%Y-%m-%dT%H:%M:%S.%fZ"
+                                    ),
+                                    "name": str(product_2_2.name),
+                                    "image_url": None,
+                                    "hex_color": None,
+                                    "price": str(product_2_2.price),
+                                },
+                                {
+                                    "id": str(product_2_3.id),
+                                    "created_at": product_2_3.created_at.strftime(
+                                        "%Y-%m-%dT%H:%M:%S.%fZ"
+                                    ),
+                                    "updated_at": product_2_3.updated_at.strftime(
+                                        "%Y-%m-%dT%H:%M:%S.%fZ"
+                                    ),
+                                    "name": str(product_2_3.name),
+                                    "image_url": None,
+                                    "hex_color": None,
+                                    "price": str(product_2_3.price),
+                                },
+                            ],
+                        },
+                    ],
+                }
+            ],
+        )
+
+    def test_menu_set_list_queries(self):
+        step_1 = MenuSetStepFactory(menu_set=self.menu_set)
+        step_2 = MenuSetStepFactory(menu_set=self.menu_set)
+
+        product_1_1 = ProductFactory()
+        product_1_2 = ProductFactory()
+        product_2_1 = ProductFactory()
+        product_2_2 = ProductFactory()
+        product_2_3 = ProductFactory()
+        step_1.products.add(product_1_1)
+        step_1.products.add(product_1_2)
+        step_2.products.add(product_2_1)
+        step_2.products.add(product_2_2)
+        step_2.products.add(product_2_3)
+        url = reverse("menu:menu-sets-list")
+
+        with self.assertNumQueries(5):
+            response = self.client.get(url)
+
+        # queries should not depend on amount of steps
+        menu_set = MenuSetFactory()
+        step_4 = MenuSetStepFactory(menu_set=menu_set)
+        step_3 = MenuSetStepFactory(menu_set=self.menu_set)
+        step_3.products.add(product_1_1)
+        step_4.products.add(product_1_2)
+
+        with self.assertNumQueries(5):
+            response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

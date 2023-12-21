@@ -6,31 +6,25 @@ import { useConfirmRemovalDialog } from "./useConfirmRemovalDialog"
 
 describe("useConfirmRemovalDialog", () => {
   it("opens and closes removal dialog", async () => {
-    const handleProductClick = jest.fn()
+    const someFn = jest.fn()
     const { result } = renderHook(() =>
-      useConfirmRemovalDialog(handleProductClick)
+      useConfirmRemovalDialog()
     )
 
     // Initial state
     expect(result.current.isRemovalDialogOpened).toBeFalsy()
-    expect(result.current.productToRemove).toBeNull()
+    expect(result.current.itemName).toBeNull()
+
+    // Trigger removal dialog open
 
     // Trigger removal dialog open
     await act(() => {
-      result.current.onOrderedItemClick({
-        amount: 1,
-        name: "Product 1",
-        price: "2.56",
-      })
+      result.current.decorateOnClick(() => someFn, "deedee")
     })
 
     // Ensure dialog is open and product to remove is set
     expect(result.current.isRemovalDialogOpened).toBeTruthy()
-    expect(result.current.productToRemove).toEqual({
-      amount: 1,
-      name: "Product 1",
-      price: "2.56",
-    })
+    expect(result.current.itemName).toEqual("deedee")
 
     // Trigger removal dialog close
     await act(() => {
@@ -38,24 +32,23 @@ describe("useConfirmRemovalDialog", () => {
     })
 
     // Ensure dialog is closed and product to remove is cleared
-    expect(handleProductClick).not.toHaveBeenCalled()
+    expect(someFn).not.toHaveBeenCalled()
     expect(result.current.isRemovalDialogOpened).toBeFalsy()
-    expect(result.current.productToRemove).toBeNull()
+    expect(result.current.itemName).toBeNull()
   })
 
   it("confirms removal on dialog confirmation", async () => {
-    const handleProductClick = jest.fn()
+    const someFn = jest.fn()
     const { result } = renderHook(() =>
-      useConfirmRemovalDialog(handleProductClick)
+      useConfirmRemovalDialog()
     )
 
     // Trigger removal dialog open
     await act(() => {
-      result.current.onOrderedItemClick({
-        amount: 1,
-        name: "Product 1",
-        price: "2.56",
-      })
+      result.current.decorateOnClick(() => someFn, "deedee")
+    })
+    await act(() => {
+      result.current.onConfirmRemoveProduct()
     })
 
     // Trigger removal dialog confirmation
@@ -64,29 +57,21 @@ describe("useConfirmRemovalDialog", () => {
     })
 
     // Ensure handleProductClick is called with the correct product
-    expect(handleProductClick).toHaveBeenCalledWith({
-      amount: 1,
-      name: "Product 1",
-      price: "2.56",
-    })
+    expect(someFn).toHaveBeenCalledWith()
     // Ensure dialog is closed and product to remove is cleared
     expect(result.current.isRemovalDialogOpened).toBeFalsy()
-    expect(result.current.productToRemove).toBeNull()
+    expect(result.current.itemName).toBeNull()
   })
 
   it("closes removal dialog on dialog close", async () => {
-    const handleProductClick = jest.fn()
+    const someFn = jest.fn()
     const { result } = renderHook(() =>
-      useConfirmRemovalDialog(handleProductClick)
+      useConfirmRemovalDialog()
     )
 
     // Trigger removal dialog open
     await act(() => {
-      result.current.onOrderedItemClick({
-        amount: 1,
-        name: "Product 1",
-        price: "2.56",
-      })
+      result.current.decorateOnClick(() => someFn, "deedee")
     })
 
     // Trigger removal dialog close
@@ -95,8 +80,8 @@ describe("useConfirmRemovalDialog", () => {
     })
 
     // Ensure dialog is closed and product to remove is cleared
-    expect(handleProductClick).not.toHaveBeenCalled()
+    expect(someFn).not.toHaveBeenCalled()
     expect(result.current.isRemovalDialogOpened).toBeFalsy()
-    expect(result.current.productToRemove).toBeNull()
+    expect(result.current.itemName).toBeNull()
   })
 })

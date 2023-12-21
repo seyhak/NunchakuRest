@@ -1,7 +1,6 @@
 ## Priority
-FE Welcome Page -> Login -> Django Admin Menu -> Roles -> THEME -> Ordering -> Displaying -> github hooks -> ...
 
-!Deploy this sht: Adding Menu -> Ordering -> Displaying -> Deploy -> Upgrade
+!Deploy this sht: Deploy -> Upgrade
 
 ## Important
 
@@ -12,11 +11,10 @@ FE Welcome Page -> Login -> Django Admin Menu -> Roles -> THEME -> Ordering -> D
 [ ] Creating Roles - Admin, Manager, Employee, Client
 [ ] Welcome page - SSR page advertising the restaurant
 [ ] Displaying POS (ordering) for employee
-[ ] Displaying orders todo for employees
+[x] Displaying orders todo for employees
 [ ] Displaying ready/pending orders (websockets)
 [ ] Managing Menu via Django Admin
-[ ] Displaying ordering for client
-[ ] Displaying ordering for client
+[x] Displaying ordering for client
 [ ] Manager/employee can see orders from history, and later Charts from minor
 
 ## Major

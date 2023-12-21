@@ -1,29 +1,39 @@
 import { Button, Divider, Paper, Typography } from "@mui/material"
-import { OrderedProductsState } from "../Menu/useMenu"
 import "./Payment.sass"
 import { PaymentMethods } from "../PaymentMethods/PaymentMethods"
-import { useKiosk } from "../Kiosk/useKiosk"
 
 import { Loader } from "@/components/Loader/Loader"
 import { PaymentOrderId } from "../PaymentOrderId/PaymentOrderId"
 import { usePayment } from "./usePayment"
+import { useKioskContext } from "@/providers/kiosk-provider"
+import { useMemo } from "react"
+import { orderedMenuSetsToPaymentItemAdapter, orderedProductsToPaymentItemAdapter } from "./Payment.utils"
 
 
 type PaymentProps = {
-  orderedProducts: OrderedProductsState;
-  setPage: ReturnType<typeof useKiosk>['pageState']['setPage']
 };
-export const Payment = ({ orderedProducts, setPage }: PaymentProps) => {
-  const {isLoading, handlePay, onBackButtonClick, orderId} = usePayment(orderedProducts, setPage)
+export const Payment = () => {
+  const {orderedProductsState: {
+    orderedProducts,
+  },
+  orderedMenuSetsState: {orderedMenuSets}
+} = useKioskContext()
+const items = useMemo(() => {
+  const products = orderedProductsToPaymentItemAdapter(orderedProducts) || []
+  const menuSets = orderedMenuSetsToPaymentItemAdapter(orderedMenuSets) || []
+  return [...products, ...menuSets]
+}, [orderedMenuSets, orderedProducts])
+
+  const {isLoading, handlePay, onBackButtonClick, orderId} = usePayment()
 
   return (
     <div className="payment">
       <Paper elevation={3}>
         <>
-        {!!orderId ? <PaymentOrderId orderId={orderId} setPage={setPage} /> : isLoading ? <Loader/> : orderedProducts ? (
+        {!!orderId ? <PaymentOrderId orderId={orderId} /> : isLoading ? <Loader/> : items ? (
           <>
           <div className="products">
-            {Object.values(orderedProducts).map((op) => (
+            {items.map((op) => (
             <div key={op.name} className="product">
               <Typography>{`${op.name} x ${op.amount}:`}</Typography>
               <Typography>{op.price}</Typography>

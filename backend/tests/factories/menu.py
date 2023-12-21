@@ -1,7 +1,17 @@
-from factory import fuzzy
+from factory import SubFactory, fuzzy
 from factory.django import DjangoModelFactory
 
-from menu.models import Category, Menu, Order, Product, ProductInOrderAmount
+from menu.models import (
+    Category,
+    Menu,
+    MenuSet,
+    MenuSetsInOrderAmount,
+    MenuSetStep,
+    Order,
+    OrderedProductsInMenuSetsOrder,
+    Product,
+    ProductInOrderAmount,
+)
 
 
 class ProductFactory(DjangoModelFactory):
@@ -36,3 +46,35 @@ class ProductInOrderAmountFactory(DjangoModelFactory):
 
     class Meta:
         model = ProductInOrderAmount
+
+
+class MenuSetFactory(DjangoModelFactory):
+    name = fuzzy.FuzzyText()
+
+    class Meta:
+        model = MenuSet
+
+
+class MenuSetStepFactory(DjangoModelFactory):
+    name = fuzzy.FuzzyText()
+    menu_set = SubFactory(MenuSetFactory)
+
+    class Meta:
+        model = MenuSetStep
+
+
+class MenuSetsInOrderAmountFactory(DjangoModelFactory):
+    menu_set = SubFactory(MenuSetFactory)
+    order = SubFactory(OrderFactory)
+    amount = fuzzy.FuzzyInteger(1, 9999)
+
+    class Meta:
+        model = MenuSetsInOrderAmount
+
+
+class OrderedProductsInMenuSetsOrderFactory(DjangoModelFactory):
+    menu_set_in_order = SubFactory(MenuSetsInOrderAmount)
+    product = SubFactory(ProductFactory)
+
+    class Meta:
+        model = OrderedProductsInMenuSetsOrder

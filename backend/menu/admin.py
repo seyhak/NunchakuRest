@@ -1,7 +1,17 @@
 from django.contrib import admin
 from django.utils import timezone
 
-from .models import Category, Menu, Order, Product, ProductInOrderAmount
+from .models import (
+    Category,
+    Menu,
+    MenuSet,
+    MenuSetsInOrderAmount,
+    MenuSetStep,
+    Order,
+    OrderedProductsInMenuSetsOrder,
+    Product,
+    ProductInOrderAmount,
+)
 
 
 @admin.register(Product)
@@ -56,3 +66,44 @@ class ProductInOrderAmountAdmin(admin.ModelAdmin):
     list_display = ("id", "product", "order", "amount")
     list_filter = ["amount"]
     search_fields = ["id" "product__name", "order__order_id"]
+
+
+@admin.register(MenuSet)
+class MenuSetAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "updated_at", "is_active")
+    list_filter = ["is_active"]
+    search_fields = ["id", "name"]
+
+
+@admin.register(MenuSetStep)
+class MenuSetStepAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+        "menu_set_name",
+        "updated_at",
+        "ordering_number",
+        "is_active",
+    )
+    list_filter = ["is_active"]
+    search_fields = ["id", "name"]
+
+    def menu_set_name(self, obj):
+        return obj.menu_set.name
+
+    menu_set_name.short_description = "Menu Set Name"
+
+
+@admin.register(MenuSetsInOrderAmount)
+class MenuSetsInOrderAmountAdmin(admin.ModelAdmin):
+    list_display = ("id", "menu_set", "order", "created_at")
+
+
+@admin.register(OrderedProductsInMenuSetsOrder)
+class OrderedProductsInMenuSetsOrderAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "menu_set_in_order",
+        "product",
+        "ordering_number",
+    )

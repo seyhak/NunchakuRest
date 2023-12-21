@@ -7,6 +7,13 @@ from django.db import models
 from django.utils import timezone
 
 
+class IsActiveModel(models.Model):
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        abstract = True
+
+
 class UUIDModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
@@ -17,6 +24,13 @@ class UUIDModel(models.Model):
 class TimestampedModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class OrderedModel(models.Model):
+    ordering_number = models.PositiveIntegerField(default=0)
 
     class Meta:
         abstract = True
@@ -54,12 +68,39 @@ class Category(TimestampedModel, UUIDModel):
         return self.name
 
 
+class MenuSet(IsActiveModel, UUIDModel, TimestampedModel):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+class MenuSetStep(IsActiveModel, UUIDModel, TimestampedModel):
+    name = models.CharField(max_length=255)
+    menu_set = models.ForeignKey(
+        MenuSet, related_name="set_steps", on_delete=models.DO_NOTHING
+    )
+    products = models.ManyToManyField(
+        Product,
+        blank=True,
+        related_name="menu_set_steps",
+    )
+    ordering_number = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = [("name", "menu_set")]
+
+    def __str__(self):
+        return f"{self.menu_set.name} - {self.name}"
+
+
 class Menu(TimestampedModel, UUIDModel):
     name = models.CharField(max_length=255)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     categories = models.ManyToManyField(Category, related_name="menus", blank=True)
     products = models.ManyToManyField(Product, related_name="menus", blank=True)
+    menu_sets = models.ManyToManyField(MenuSet, related_name="menus", blank=True)
 
     def clean(self):
         if self.start_date and self.end_date and self.start_date > self.end_date:
@@ -94,6 +135,9 @@ class Order(TimestampedModel, UUIDModel):
     products = models.ManyToManyField(
         Product, related_name="orders", through="ProductInOrderAmount"
     )
+    menu_sets = models.ManyToManyField(
+        MenuSet, related_name="orders", through="MenuSetsInOrderAmount"
+    )
     order_id = models.CharField(editable=False, default=order_id_default)
     payment_method = models.CharField(max_length=2, default=PaymentMethods.CASH)
     is_paid = models.BooleanField(default=False)
@@ -114,6 +158,23 @@ class ProductInOrderAmount(models.Model):
 
     class Meta:
         unique_together = [("order", "product")]
+
+
+class MenuSetsInOrderAmount(TimestampedModel):
+    products = models.ManyToManyField(Product, through="OrderedProductsInMenuSetsOrder")
+    menu_set = models.ForeignKey(MenuSet, on_delete=models.DO_NOTHING)
+    order = models.ForeignKey(Order, on_delete=models.DO_NOTHING)
+    amount = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+
+
+class OrderedProductsInMenuSetsOrder(OrderedModel):
+    menu_set_in_order = models.ForeignKey(
+        MenuSetsInOrderAmount, on_delete=models.DO_NOTHING
+    )
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
+
+    class Meta:
+        unique_together = [("menu_set_in_order", "product", "ordering_number")]
 
 
 # from django.db.models.signals import m2m_changed

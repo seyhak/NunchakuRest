@@ -1,23 +1,27 @@
 import { Typography } from "@mui/material"
 import { ConfirmationDialog } from "@/components/ConfirmationDialog/ConfirmationDialog"
-import { useConfirmRemovalDialog } from "./useConfirmRemovalDialog"
 
-export type ConfirmRemovalDialogProps = Omit<ReturnType<typeof useConfirmRemovalDialog>, "onOrderedItemClick">
+export type ConfirmRemovalDialogProps = {
+  itemName: string | null
+  onConfirm: () => void
+  onClose: () => void
+  isOpened: boolean
+}
 
 export const ConfirmRemovalDialog = ({
-  isRemovalDialogOpened,
-  onRemoveProductClose,
-  onConfirmRemoveProduct,
-  productToRemove,
+  isOpened,
+  onClose,
+  onConfirm,
+  itemName,
 }: ConfirmRemovalDialogProps) => {
   return (
     <ConfirmationDialog
       title="Confirm removal"
-      open={isRemovalDialogOpened}
-      onClose={onRemoveProductClose}
-      onConfirm={onConfirmRemoveProduct}
+      open={isOpened}
+      onClose={onClose}
+      onConfirm={onConfirm}
     >
-      <Typography>{`Do you want to remove ${productToRemove?.name}?`}</Typography>
+      <Typography>{`Do you want to remove ${itemName}?`}</Typography>
     </ConfirmationDialog>
   )
 }

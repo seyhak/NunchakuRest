@@ -4,45 +4,51 @@ import { Button, Divider, Drawer, Typography } from "@mui/material"
 import { OrderedItem } from "../OrderedItem/OrderedItem"
 import { ConfirmRemovalDialog } from "./ConfirmRemovalDialog/ConfirmRemovalDialog"
 import { useConfirmRemovalDialog } from "./ConfirmRemovalDialog/useConfirmRemovalDialog"
-import { OrderedProductsState } from "../Menu/useMenu"
 import { OrderedProduct } from "@/types/menu"
+import { useSummary } from "./useSummary"
 
 
 export type SummaryProps = {
   drawer: {
     isDrawerOpened: boolean
-    orderedProducts: OrderedProductsState
     onConfirmClick: any
     onCancelClick: any
-    sum: number
     // eslint-disable-next-line
     handleProductRemove: (item: OrderedProduct) => void
+    // eslint-disable-next-line
+    handleMenuSetRemove: (itemKey: string) => void
   },
 }
 export const Summary = ({
   drawer
 }: SummaryProps) => {
   const {
-    onOrderedItemClick,
+    decorateOnClick,
     ...removalDialogProps
-  } = useConfirmRemovalDialog(drawer.handleProductRemove)
+  } = useConfirmRemovalDialog()
+  const {
+    sum, orderedItems
+  } = useSummary(drawer.handleProductRemove, drawer.handleMenuSetRemove)
+
   return (
     <>
     <Drawer variant="persistent" anchor="right" open={drawer.isDrawerOpened}>
         <div className="summary">
           <div className="products">
-            {drawer.orderedProducts &&
-              Object.values(drawer.orderedProducts).map((op) => (
+            {orderedItems.length &&
+              orderedItems.map((op) => (
                 <OrderedItem
                   key={op.name}
-                  orderedProduct={op}
-                  handleClick={onOrderedItemClick}
+                  name={op.name}
+                  amount={op.amount}
+                  price={op.price}
+                  handleClick={() => decorateOnClick(() => op.handleRemove, op.name)}
                 />
               ))}
           </div>
           <div className="controls">
             <Divider />
-            <Typography>{`total: ${drawer.sum.toFixed(2)}`}</Typography>
+            <Typography>{`total: ${sum}`}</Typography>
             <Divider />
             <div className="buttons">
               <Button onClick={drawer.onConfirmClick} variant="contained" size="large">
@@ -61,7 +67,11 @@ export const Summary = ({
         </div>
 
       </Drawer>
-      <ConfirmRemovalDialog {...removalDialogProps}/>
+      <ConfirmRemovalDialog
+      isOpened={removalDialogProps.isRemovalDialogOpened}
+      itemName={removalDialogProps.itemName}
+      onClose={removalDialogProps.onRemoveProductClose}
+      onConfirm={removalDialogProps.onConfirmRemoveProduct}/>
     </>
   )
 }

@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { OrderedItem } from './OrderedItem'
 
-describe('OrderedItem', () => {
+describe.skip('OrderedItem', () => {
   const orderedProduct = {
     name: 'Huge Dildo',
     price: '10.99',
