@@ -32,7 +32,6 @@ export const useOrderDisplay = () => {
     setControlDialogOpen(false)
   }, [])
 
-  console.log({refreshData, data, isLoading, error})
   return {
     data,
     isLoading,

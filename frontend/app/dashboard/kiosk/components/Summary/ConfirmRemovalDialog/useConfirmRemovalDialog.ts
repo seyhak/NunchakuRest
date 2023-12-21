@@ -1,33 +1,39 @@
-import { OrderedProduct } from "@/types/menu"
 import { useCallback, useState } from "react"
 
-export const useConfirmRemovalDialog = (handleProductClick: (item: OrderedProduct) => void) => {
+
+export const useConfirmRemovalDialog = () => {
   const [isRemovalDialogOpened, setRemovalDialogOpened] =
   useState(false)
-  const [productToRemove, setProductToRemove] = useState<OrderedProduct | null>(
+  const [func, setFunc] = useState<(() => void) | null>(
     null
   )
+  const [itemName, setItemName] = useState<string | null>(null)
+
+  const resetState = useCallback(() => {
+    setRemovalDialogOpened(false)
+    setFunc(null)
+    setItemName(null)
+  }, [])
 
   const onConfirmRemoveProduct = useCallback(() => {
-    handleProductClick(productToRemove!)
-    setRemovalDialogOpened(false)
-    setProductToRemove(null)
-  }, [setRemovalDialogOpened, setProductToRemove, productToRemove, handleProductClick])
+    func?.()
+    resetState()
+  }, [resetState, func])
 
   const onRemoveProductClose = useCallback(() => {
-    setRemovalDialogOpened(false)
-    setProductToRemove(null)
-  }, [setRemovalDialogOpened])
+    resetState()
+  }, [resetState])
 
-  const onOrderedItemClick = useCallback((item: OrderedProduct) => {
-    setProductToRemove(item)
+  const decorateOnClick = useCallback((func: () => void, itemName: string) => {
+    setFunc(func)
+    setItemName(itemName)
     setRemovalDialogOpened(true)
   }, [])
   return {
     isRemovalDialogOpened,
     onConfirmRemoveProduct,
     onRemoveProductClose,
-    onOrderedItemClick,
-    productToRemove
+    decorateOnClick,
+    itemName,
   }
 }

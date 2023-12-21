@@ -1,95 +1,67 @@
-import { Category, KioskPages, OrderedProduct, Product } from "@/types/menu"
 import {
-  Dispatch,
-  SetStateAction,
+  Category,
+  Menu,
+  OrderedProduct,
+  Product,
+} from "@/types/menu"
+import {
+  KioskPages,
+} from "@/types/kiosk"
+import {
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react"
 import "./Menu.sass"
-import { omit } from "lodash"
-import { useKiosk } from "../Kiosk/useKiosk"
+import { useKioskContext } from "@/providers/kiosk-provider"
+import { Tile } from "./Menu"
+import { useOrderedMenuSets } from "./useOrderedMenuSets"
+import { createCategoryTiles, createMenuSetsTiles, createProductsTiles, handleSettingOrdered, useCancelOrderDialog } from "./useMenu.utils"
 
-export type OrderedProductsState = {
-  [key: string]: OrderedProduct;
-} | null;
 
-const handleSettingOrderedProducts = (
-  prevState: OrderedProductsState,
-  item: Product | OrderedProduct,
-  difference: number = 1
-) => {
-  const found = prevState?.[item.name]
-  let newAmount = difference
-  if (found) {
-    newAmount = found.amount + difference
-  }
 
-  if (newAmount === 0) {
-    const isTheOnlyProductInState =
-      prevState && Object.keys(prevState).length === 1
-    if (isTheOnlyProductInState) {
-      return null
-    }
-    return omit({ ...prevState }, [item.name])
-  }
-  return {
-    ...prevState,
-    [item.name]: { name: item.name, price: item.price, amount: newAmount, id: item.id },
-  }
-}
-
-const useCancelOrderDialog = (
-  setOrderedProducts: Dispatch<SetStateAction<OrderedProductsState>>,
-  setDrawerOpened: Dispatch<SetStateAction<boolean>>
-) => {
-  const [isCancelDialogOpened, setCancelDialogOpened] = useState(false)
-  const onCancelClick = useCallback(() => {
-    setCancelDialogOpened(true)
-  }, [])
-  const handleCancelConfirm = () => {
-    setCancelDialogOpened(false)
-    setOrderedProducts(null)
-    setDrawerOpened(false)
-  }
-  const handleCancelCancel = () => {
-    setCancelDialogOpened(false)
-  }
-
-  return {
-    isCancelDialogOpened,
-    handleCancelCancel,
-    handleCancelConfirm,
-    onCancelClick,
-  }
-}
-
-export const useMenu = (
-  categories: Category[],
-  products: Product[],
-  setPage: ReturnType<typeof useKiosk>["pageState"]["setPage"],
-  orderedProductsState: ReturnType<typeof useKiosk>["orderedProductsState"]
-) => {
-  const [orderedProducts, setOrderedProducts] =
-  useState<OrderedProductsState>(null)
-  const [sum, setSum] = useState(0.0)
+export const useMenu = (menu: Menu) => {
+  const {
+    pageState: { setPage },
+    orderedProductsState: { setOrderedProducts, orderedProducts },
+    orderedMenuSetsState: { orderedMenuSets },
+  } = useKioskContext()
+  const { categories, menuSets, products } = menu
   const [isDrawerOpened, setDrawerOpened] = useState(false)
   const [isConfirmDialogOpened, setConfirmDialogOpened] = useState(false)
-  const [openedCategories, setOpenedCategories] = useState<
+  const [openedProducts, setOpenedProducts] = useState<
     Product[] | Category[] | null
   >(null)
+  const {
+    openedSet,
+    openedSetStep,
+    onMenuSetClick,
+    onProductInStepClick,
+    resetState: resetMenuSetsState,
+    handleMenuSetRemove,
+  } = useOrderedMenuSets()
+
   const cancelOrderDialog = useCancelOrderDialog(
     setOrderedProducts,
     setDrawerOpened
   )
+  useEffect(() => {
+    if (!orderedMenuSets && !orderedProducts) {
+      setDrawerOpened(false)
+    } else if (!!orderedMenuSets || !!orderedProducts) {
+      setDrawerOpened(true)
+    }
+  }, [orderedProducts, orderedMenuSets])
 
   const resetState = useCallback(() => {
     setDrawerOpened(false)
-    setSum(0.0)
-    setOpenedCategories(null)
-  }, [])
+    setOpenedProducts(null)
+    resetMenuSetsState()
+  }, [resetMenuSetsState])
+
   const onBackArrowClick = useCallback(() => {
-    setOpenedCategories((prevState: any) => {
+    setOpenedProducts((prevState: any) => {
       const nextState = prevState?.splice(0, prevState.length - 1)
       return nextState?.length === 0 ? null : nextState
     })
@@ -100,47 +72,43 @@ export const useMenu = (
 
   const handleConfirmDialogConfirm = useCallback(() => {
     setPage(KioskPages.PAYMENT as any)
-    orderedProductsState.setOrderedProducts(orderedProducts)
     resetState()
     setConfirmDialogOpened(false)
-  }, [setPage, resetState, orderedProductsState, orderedProducts])
+  }, [setPage, resetState])
 
   const handleConfirmDialogCancel = () => {
     setConfirmDialogOpened(false)
   }
 
-  const onProductClick = useCallback(
-    (item: Product) => {
-      if (!isDrawerOpened) {
-        setDrawerOpened(true)
-      }
-      setSum(
-        (prevSum) => (prevSum * 100 + Number.parseFloat(item.price) * 100) / 100
-      )
-      setOrderedProducts((prevState: any) =>
-        handleSettingOrderedProducts(prevState, item)
-      )
-    },
-    [setSum, isDrawerOpened, setDrawerOpened, setOrderedProducts]
+  const withDrawerOpen = useCallback(<T>(func: (arg: T) => void) => {
+    return (arg: T) => {
+      setDrawerOpened(true)
+      func(arg)
+    }
+  }, [])
+  const onProductClick = withDrawerOpen(
+    useCallback(
+      (item: Product) => {
+        setOrderedProducts((prevState: any) =>
+          handleSettingOrdered(prevState, item)
+        )
+      },
+      [setOrderedProducts]
+    )
   )
+
   const handleProductRemove = useCallback(
     (item: OrderedProduct) => {
-      setSum(
-        (prevSum) => (prevSum * 100 - Number.parseFloat(item.price) * 100) / 100
-      )
       setOrderedProducts((prevState: any) => {
-        const nextState = handleSettingOrderedProducts(prevState, item, -1)
-        if (!nextState || !Object.keys(nextState).length) {
-          setDrawerOpened(false)
-        }
+        const nextState = handleSettingOrdered(prevState, item, -1)
         return nextState
       })
     },
-    [setSum, setDrawerOpened, setOrderedProducts]
+    [setOrderedProducts]
   )
   const onCategoryClick = useCallback(
     (item: Category) => {
-      setOpenedCategories((prevState: any) => {
+      setOpenedProducts((prevState: any) => {
         if (prevState) {
           return [...prevState, item]
         } else {
@@ -148,25 +116,49 @@ export const useMenu = (
         }
       })
     },
-    [setOpenedCategories]
+    [setOpenedProducts]
   )
-  const tiles: (Category | Product)[] = useMemo(() => {
-    if (openedCategories) {
+
+  const tiles: Tile[] = useMemo(() => {
+    if (openedSetStep) {
+      return createProductsTiles(openedSetStep.products, onProductInStepClick)
+    }
+    if (openedProducts) {
       const subCategories = (
-        openedCategories[openedCategories.length - 1] as Category
+        openedProducts[openedProducts.length - 1] as Category
       )?.subCategories.map((c) => c)
       const productsOfCategory = (
-        openedCategories[openedCategories.length - 1] as Category
+        openedProducts[openedProducts.length - 1] as Category
       )?.products.map((c) => c)
-      return [...subCategories, ...productsOfCategory]
+      const subCategoriesTiles = createCategoryTiles(
+        subCategories,
+        onCategoryClick
+      )
+      const productsOfCategoryTiles = createProductsTiles(
+        productsOfCategory,
+        onProductClick
+      )
+      return [...subCategoriesTiles, ...productsOfCategoryTiles]
     }
-    return categories.concat(products as any)
-  }, [categories, products, openedCategories])
+    return createCategoryTiles(categories, onCategoryClick)
+      .concat(createProductsTiles(products, onProductClick))
+      .concat(createMenuSetsTiles(menuSets, onMenuSetClick))
+  }, [
+    categories,
+    products,
+    menuSets,
+    openedProducts,
+    onCategoryClick,
+    onProductClick,
+    onMenuSetClick,
+    openedSetStep,
+    onProductInStepClick,
+  ])
 
   return {
-    onProductClick,
-    onCategoryClick,
-    openedCategories,
+    openedSet,
+    openedSetStep,
+    openedProducts,
     onBackArrowClick,
     cancelOrderDialog,
     confirmDialog: {
@@ -177,8 +169,7 @@ export const useMenu = (
     drawer: {
       isDrawerOpened,
       handleProductRemove,
-      sum,
-      orderedProducts,
+      handleMenuSetRemove,
       onConfirmClick,
       onCancelClick: cancelOrderDialog.onCancelClick,
     },

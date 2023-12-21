@@ -3,12 +3,21 @@ import { usePaymentOrderId } from "./usePaymentOrderId"
 
 jest.useFakeTimers()
 
+const mockResetState = jest.fn()
+
+jest.mock("@/providers/kiosk-provider", () => ({
+  useKioskContext: () => ({
+    resetState: () => mockResetState()
+  })
+}))
+
 describe("usePaymentOrderId", () => {
   it("should redirect to Kiosk after countdown reaches 0", async () => {
-    const setPageMock = jest.fn()
-
-    const { result } = renderHook(() => usePaymentOrderId(setPageMock))
-
+    let result
+    await act(() => {
+      const hook = renderHook(() => usePaymentOrderId())
+      result = hook.result
+    })
     expect(result.current.counter).toEqual(9)
     expect(result.current.progress).toEqual(0)
 

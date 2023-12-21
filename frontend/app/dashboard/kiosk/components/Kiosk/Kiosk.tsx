@@ -1,28 +1,26 @@
 'use client'
-import { KioskPages, Menu as MenuType } from "@/types/menu"
+import { Menu as MenuType } from "@/types/menu"
+import {KioskPages} from "@/types/kiosk"
 import { Menu } from "../Menu/Menu"
 import { Payment } from "../Payment/Payment"
-import { useKiosk } from "./useKiosk"
+import { KioskContext, KioskProvider } from "@/providers/kiosk-provider"
 
 export type KioskProps = {
   menu: MenuType;
 };
 export function Kiosk({ menu }: KioskProps) {
-  const {orderedProductsState, pageState} = useKiosk()
-
   return (
-    <>
-      {pageState.page === KioskPages.MENU ? (
-        <Menu
-          menu={menu}
-          setPage={pageState.setPage}
-          orderedProductsState={orderedProductsState}
-        />
-      ) : (
-        <Payment orderedProducts={orderedProductsState.orderedProducts} 
-        setPage={pageState.setPage}/>
-      )}
-    </>
+    <KioskProvider>
+      <KioskContext.Consumer>
+        {value => value?.pageState.page === KioskPages.MENU ? (
+          <Menu
+            menu={menu}
+          />
+        ) : (
+          <Payment/>
+        )}
+      </KioskContext.Consumer>
+    </KioskProvider>
   )
 }
 

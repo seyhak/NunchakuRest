@@ -2,8 +2,14 @@ import { UUID } from "crypto";
 import axiosInstance from "./axios";
 import { DeliveryMethods, Order, OrderInOrdersDisplay, OrderProduct, PaymentMethods } from "@/types/menu";
 
+type OrderMenuSetPayloadData = {
+  amount: number
+  id: UUID
+  products: {id: UUID}[]
+}
 
 export type CreateOrderPayloadData = {
+  menuSets: OrderMenuSetPayloadData[]
   products: OrderProduct[]
   paymentMethod?: typeof PaymentMethods[keyof typeof PaymentMethods]
   deliveryMethod?: typeof DeliveryMethods[keyof typeof DeliveryMethods]

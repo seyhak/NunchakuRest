@@ -1,21 +1,21 @@
 
 import { useCallback, useEffect, useState } from "react"
-import { KioskPages } from "@/types/menu"
-import { useKiosk } from "../Kiosk/useKiosk"
+import { useKioskContext } from "@/providers/kiosk-provider"
 
 const COUNTDOWN_MAX_SECONDS = 9
 
-export const usePaymentOrderId = (setPage: ReturnType<typeof useKiosk>['pageState']['setPage']) => {
+export const usePaymentOrderId = () => {
   const [counter, setCounter] = useState(COUNTDOWN_MAX_SECONDS)
+  const {resetState} = useKioskContext()
 
   const redirectToKioskAfterCountdown = useCallback(async (countdown: number) => {
     setTimeout(() => {
       setCounter(prevState => prevState - 1)
       if(countdown === 0) {
-        setPage(KioskPages.MENU)
+        resetState()
       }
     }, 1000)
-  }, [setCounter, setPage])
+  }, [setCounter, resetState])
 
   useEffect(() => {
     redirectToKioskAfterCountdown(counter)

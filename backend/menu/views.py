@@ -1,12 +1,14 @@
+from django.db.models import Prefetch
 from django.utils import timezone
 from rest_framework import decorators, mixins, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Category, Menu, Order, Product
+from .models import Category, Menu, MenuSet, Order, Product
 from .serializers import (
     CategorySerializer,
     MenuSerializer,
+    MenuSetSerializer,
     OrderSerializer,
     ProductSerializer,
 )
@@ -57,3 +59,16 @@ class OrderViewSet(
         serializer = self.get_serializer(order)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
+
+
+class MenuSetViewSet(
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    permission_classes = [IsAuthenticated]
+    queryset = MenuSet.objects.all()
+    serializer_class = MenuSetSerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset().prefetch_related("set_steps__products")
+        return qs

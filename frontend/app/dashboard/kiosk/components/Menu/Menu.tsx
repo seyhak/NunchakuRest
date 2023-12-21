@@ -1,6 +1,6 @@
 "use client"
 
-import { Menu as MenuType} from "@/types/menu"
+import { Menu as MenuType } from "@/types/menu"
 import "./Menu.sass"
 import { MenuItem } from "@/components/MenuItem/MenuItem"
 import { Typography } from "@mui/material"
@@ -8,21 +8,26 @@ import classNames from "classnames"
 import { ConfirmationDialog } from "@/components/ConfirmationDialog/ConfirmationDialog"
 import { Summary } from "../Summary/Summary"
 import { useMenu } from "./useMenu"
-import { useKiosk } from "../Kiosk/useKiosk"
 import { BackButton } from "@/components/BackButton/BackButton"
 
 type MenuProps = {
   menu: MenuType;
-  setPage: ReturnType<typeof useKiosk>['pageState']['setPage']
-  orderedProductsState: ReturnType<typeof useKiosk>["orderedProductsState"]
 };
 
-export const Menu = ({menu: { categories, products, name }, setPage, orderedProductsState}: MenuProps) => {
+export type Tile = {
+  id: any;
+  name: string;
+  onClick: () => void;
+  price?: string;
+  className?: string;
+};
+
+export const Menu = ({ menu }: MenuProps) => {
   const {
-    openedCategories,
-    onProductClick,
+    openedProducts,
+    openedSet,
+    openedSetStep,
     drawer,
-    onCategoryClick,
     onBackArrowClick,
     cancelOrderDialog: {
       handleCancelConfirm,
@@ -31,23 +36,29 @@ export const Menu = ({menu: { categories, products, name }, setPage, orderedProd
     },
     confirmDialog,
     tiles,
-  } = useMenu(categories, products, setPage, orderedProductsState)
+  } = useMenu(menu)
 
   return (
     <div
       className={classNames("menu", { "drawer-open": drawer.isDrawerOpened })}
     >
-      {/* <Typography className="title">{name}</Typography> */}
+      {openedSet?.name && (
+        <>
+          <Typography className="title">{openedSet?.name}</Typography>
+          <Typography className="step">{openedSetStep?.name}</Typography>
+        </>
+      )}
       <div className="tiles">
-        {openedCategories && <BackButton onClick={onBackArrowClick} />}
-            {tiles.map((c) => (
-              <MenuItem
-                handleProductClick={onProductClick}
-                handleCategoryClick={onCategoryClick}
-                key={c.id}
-                menuItem={c}
-              />
-            ))}
+        {openedProducts && <BackButton onClick={onBackArrowClick} />}
+        {tiles.map((tile) => (
+          <MenuItem
+            onClick={tile.onClick}
+            key={tile.id}
+            name={tile.name}
+            price={tile.price}
+            className={tile.className}
+          />
+        ))}
       </div>
       <Summary
         drawer={{

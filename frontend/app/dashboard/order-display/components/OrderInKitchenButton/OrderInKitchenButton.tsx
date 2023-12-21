@@ -29,6 +29,22 @@ export const OrderInKitchenButton = ({
         </div>
       </div>
       <Divider />
+      <div className="menu-sets">
+        {order.menuSets.map(item => (
+          <div className="menu-set" key={item.id}>
+            <Typography>
+              {item.name}
+            </Typography>
+            <div className="menu-set-description">
+            <Typography>
+              {item.products}
+            </Typography>
+            <Typography className="amount">
+              {`x${item.amount}`}
+            </Typography></div>
+          </div>)
+        )}
+      </div>
       <div className="products">
         {order.products.map(p => (
           <div className="product" key={p.id}>

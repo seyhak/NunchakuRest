@@ -159,7 +159,7 @@ Changes the password of the authenticated user.
 #### Response
 
 ```
-{
+PRODUCT = {
     "id": str(self.category.id),
     "created_at": self.category.created_at.strftime(
         "%Y-%m-%dT%H:%M:%S.%fZ"
@@ -171,8 +171,6 @@ Changes the password of the authenticated user.
     "description": None,
     "image_url": None,
     "hex_color": None,
-    "sub_categories": [],
-    "products": [],
 }
 ```
 
@@ -201,6 +199,8 @@ Changes the password of the authenticated user.
     "image_url": None,
     "hex_color": None,
     "price": 123.12,
+    "sub_categories": [],
+    "products": [],
 }
 ```
 
@@ -224,6 +224,7 @@ Changes the password of the authenticated user.
       "name": str,
       "categories": [],
       "products": [],
+      "menu_sets": MENU[]
       "start_date": None,
       "end_date": None,
   },
@@ -248,6 +249,14 @@ Changes the password of the authenticated user.
     "delivery_method": "HR" | "TA",
     "order_id": str,
     "products": dict,
+    "menu_sets: {
+        "id": UUID,
+        "name": string,
+        "amount": number,
+        "products": {
+            "id": UUID,
+        }[]
+    }[]
     "payment_method": "CS",
     "is_paid": bool,
   },
@@ -259,10 +268,17 @@ Changes the password of the authenticated user.
 #### Payload
 ```
 {
+    "menu_sets: {
+        "id": UUID,
+        "amount": number,
+        "products": {
+            "id": UUID,
+        }[]
+    }[],
     "products": {
         "id": UUID,
         "amount": number
-    },
+    }[],
     "delivery_method": str from enum,
     "payment_method": str from enum
 }
@@ -286,6 +302,14 @@ Changes the password of the authenticated user.
             "amount": 50,
         },
     ],
+    "menu_sets: {
+        "id": UUID,
+        "name": string,
+        "amount": number,
+        "products": {
+            "id": UUID,
+        }[]
+    }[]
     "order_id": str,
     "payment_method": str from enum,
     "is_paid": bool,
@@ -307,5 +331,24 @@ Changes the password of the authenticated user.
     },
     "delivery_method": str from enum,
     "payment_method": str from enum
+}
+```
+
+### MENU SET
+
+`GET menu-set/`
+
+#### Response
+```
+MENU_SET_STEP = {
+    "name": str,
+    "products": PRODUCT[]
+}
+```
+```
+Response = MENU = {
+    "set_steps": MENU_SET_STEP[],
+    "id": UUID,
+    "name": str
 }
 ```
