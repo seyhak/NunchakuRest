@@ -42,7 +42,7 @@ describe('OrderInKitchenButton', () => {
       expect(screen.getByText(product.name)).toBeInTheDocument()
       expect(screen.getByText(`x${product.amount}`)).toBeInTheDocument()
     })
-    expect(screen.getByText("2 for U")).toBeInTheDocument()
+    expect(screen.getByText("2 for Ua")).toBeInTheDocument()
     expect(screen.getByText("cheeseburger, fries")).toBeInTheDocument()
   })
 

@@ -48,7 +48,7 @@ class TestProductViewSet(APITestCase):
             {
                 "id": str(self.product.id),
                 "created_at": self.product.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-                "updated_at": self.product.updated_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+                "updated_aat": self.product.updated_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
                 "name": self.product.name,
                 "image_url": None,
                 "hex_color": None,
