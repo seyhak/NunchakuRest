@@ -1,4 +1,3 @@
-from django.db.models import Prefetch
 from django.utils import timezone
 from rest_framework import decorators, mixins, status, viewsets
 from rest_framework.permissions import IsAuthenticated

@@ -385,7 +385,7 @@ class TestOrdersViewSet(APITestCase):
         product_2 = ProductFactory()
         product_3 = ProductFactory()
         product_4 = ProductFactory()
-        product_5 = ProductFactory()
+        ProductFactory()
         ProductInOrderAmountFactory(product=product_1, order=self.order, amount=20)
         ProductInOrderAmountFactory(product=product_2, order=self.order, amount=9)
 

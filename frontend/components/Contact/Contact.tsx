@@ -9,7 +9,7 @@ const EMAIL_BODY = "Your app made me curious about our cooperation. Please conta
 export type ContactProps = {
   contact: ContactType
   avatarProps: AvatarProps
-  isAnimated?: boolean
+  isAnimated?: boolean;
 }
 
 export const Contact = ({ contact, avatarProps, isAnimated = true }: ContactProps) => {

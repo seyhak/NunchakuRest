@@ -24,6 +24,9 @@ describe('OrderInKitchenButton', () => {
       { id: '1', name: 'Product1', amount: 2 },
       { id: '2', name: 'Product2', amount: 1 },
     ],
+    menuSets: [
+      { id: "3", name: '2 for U', products: "cheeseburger, fries"}
+    ],
   }
 
   it('renders order details correctly', () => {
@@ -39,6 +42,8 @@ describe('OrderInKitchenButton', () => {
       expect(screen.getByText(product.name)).toBeInTheDocument()
       expect(screen.getByText(`x${product.amount}`)).toBeInTheDocument()
     })
+    expect(screen.getByText("2 for U")).toBeInTheDocument()
+    expect(screen.getByText("cheeseburger, fries")).toBeInTheDocument()
   })
 
   it('calls onClick when clicked', async () => {
