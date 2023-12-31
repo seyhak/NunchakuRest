@@ -1,0 +1,50 @@
+name: Django CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: test
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_user_password
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.12
+    - name: Install Dependencies
+      run: |
+        cd backend
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Run Tests
+      env:
+        # The hostname used to communicate with the PostgreSQL service container
+        PG_USER: test_user
+        PG_NAME: test
+        PG_PASSWORD: test_user_password
+        DJANGO_SECRET_KEY: test_secret_key
+      run: |
+        cd backend
+        python manage.py test -v=2
+    - name: Run Linters
+      run: |
+        pip install --no-cache-dir pip install black autoflake
+        autoflake * -r --remove-all-unused-imports --remove-unused-variables --quiet -c
+        black . --check
+    # - uses: actions/upload-artifact@v4

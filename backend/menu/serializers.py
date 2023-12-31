@@ -203,7 +203,6 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         FIELDS_FOR_CREATE_ORDER = ["delivery_method", "payment_method"]
-
         create_order_data = {
             f: validated_data.get(f)
             for f in FIELDS_FOR_CREATE_ORDER

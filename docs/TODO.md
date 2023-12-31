@@ -20,7 +20,7 @@
 ## Major
 
 [ ] Idle state for kiosk
-[ ] github hooks
+[x] github hooks - GH actions
 [ ] Add theme (after API) https://mui.com/material-ui/guides/next-js-app-router/
 [ ] Managing store state
 [ ] Manager can develop menu and manage ingredients (% profit margins)

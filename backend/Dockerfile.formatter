@@ -6,8 +6,8 @@ RUN pip install --no-cache-dir pip install black isort autoflake
 
 COPY . .
 
-# RUN [ "autoflake", "."]
-# autoflake .
+# RUN [ "autoflake", "* -r --remove-all-unused-imports --remove-unused-variables --quiet -i"]
+# autoflake * -r \--remove-all-unused-imports --remove-unused-variables --quiet -i
 # isort .
 # black .
 # RUN [ "isort", "."]

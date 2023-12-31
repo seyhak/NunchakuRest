@@ -1,0 +1,29 @@
+name: Next CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Node 18.18
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18.18
+    - name: Install Dependencies
+      run: |
+        cd frontend
+        yarn
+    - name: Run Tests
+      run: |
+        cd frontend
+        yarn test
+    - name: Run Linters
+      run: |
+        cd frontend
+        yarn lint
