@@ -7,6 +7,7 @@
 [ ] add possibility many nested categories with self excluded
 [ ] pip install django-modeltranslation
 [x] Husky and githooks setup
+[ ] On 403 redirect to login
 [x] Login
 [ ] Creating Roles - Admin, Manager, Employee, Client
 [ ] Welcome page - SSR page advertising the restaurant
@@ -19,6 +20,7 @@
 
 ## Major
 
+[ ] Swagger - documentation
 [ ] Idle state for kiosk
 [x] github hooks - GH actions
 [ ] Add theme (after API) https://mui.com/material-ui/guides/next-js-app-router/
