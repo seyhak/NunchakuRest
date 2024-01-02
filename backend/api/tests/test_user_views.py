@@ -69,7 +69,7 @@ class TestSignupViewSet(TestCase):
         response = self.client.post(self.url, data)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("duplicate key value violates unique constraint", response.data)
+        self.assertIn("UNIQUE constraint failed: auth_user.username", response.data)
 
 
 class TestLoginViewSet(TestCase):

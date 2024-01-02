@@ -1,9 +1,11 @@
 import json
 from datetime import date
+from time import sleep
 from unittest import mock
 from uuid import uuid4
 
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import activate
 from freezegun import freeze_time
 from parameterized import parameterized
@@ -77,14 +79,17 @@ class TestMenuViewSet(APITestCase):
     )
     def test_menu_detail_translate(self, lang, expected):
         menu_set = MenuSetFactory()
+        sleep(0.00001)
         menu_set_1 = MenuSetFactory()
         step_1 = MenuSetStepFactory(menu_set=menu_set)
+        sleep(0.00001)
         step_2 = MenuSetStepFactory(menu_set=menu_set)
-        product_1_1 = ProductFactory()
-        product_1_2 = ProductFactory()
-        product_2_1 = ProductFactory()
-        product_2_2 = ProductFactory()
-        product_2_3 = ProductFactory()
+        products = []
+        for i in range(5):
+            products.append(ProductFactory())
+            sleep(0.00001)
+        product_1_1, product_1_2, product_2_1, product_2_2, product_2_3 = products
+
         step_1.products.add(product_1_1)
         step_1.products.add(product_1_2)
         step_2.products.add(product_2_1)
@@ -92,13 +97,21 @@ class TestMenuViewSet(APITestCase):
         step_2.products.add(product_2_3)
 
         product_1 = ProductFactory(name="banana")
+        sleep(0.00001)
         product_2 = ProductFactory(name="apple")
+        sleep(0.00001)
         product_3_1 = ProductFactory(name="white cheese")
+        sleep(0.00001)
         product_3_2 = ProductFactory(name="yellow cheese")
+        sleep(0.00001)
         product_4 = ProductFactory(name="milk")
+        sleep(0.00001)
         product_5 = ProductFactory(name="yogurt")
+        sleep(0.00001)
         category_1 = CategoryFactory(name="dairy")
+        sleep(0.00001)
         sub_category_1 = CategoryFactory(name="cheese")
+        sleep(0.00001)
         category_1.sub_categories.add(sub_category_1)
         category_1.sub_categories.add(sub_category_1)
         category_1.products.add(product_4, product_5)
@@ -114,7 +127,8 @@ class TestMenuViewSet(APITestCase):
         self.menu.save()
         activate(lang)
         url = reverse("menu:menus-detail", args=[self.menu.id])
-        response = self.client.get(url, headers={"Accept-Language": lang})
+        with self.assertNumQueries(14):
+            response = self.client.get(url, headers={"Accept-Language": lang})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # make all ordereddict dict
@@ -380,9 +394,20 @@ class TestOrdersViewSet(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), Order.objects.count())
 
+    def test_orders_list_some_finished(self):
+        OrderFactory(finished_at=timezone.now())
+        OrderFactory()
+        url = reverse("menu:orders-list")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), Order.objects.count() - 1)
+
     def test_orders_detail(self):
-        product_1 = ProductFactory()
-        product_2 = ProductFactory()
+        with freeze_time("2022-01-14 12:45:01.0002", tz_offset=1):
+            product_1 = ProductFactory()
+        with freeze_time("2022-01-15 12:45:01.0002", tz_offset=1):
+            product_2 = ProductFactory()
         product_3 = ProductFactory()
         product_4 = ProductFactory()
         ProductFactory()
@@ -401,19 +426,19 @@ class TestOrdersViewSet(APITestCase):
                 order=self.order, menu_set=menu_set, amount=5
             )
         OrderedProductsInMenuSetsOrderFactory(
-            menu_set_in_order=menu_set_in_order_1, product=product_1
+            menu_set_in_order=menu_set_in_order_1, product=product_1, ordering_number=0
         )
         OrderedProductsInMenuSetsOrderFactory(
-            menu_set_in_order=menu_set_in_order_1, product=product_2
+            menu_set_in_order=menu_set_in_order_1, product=product_2, ordering_number=1
         )
         OrderedProductsInMenuSetsOrderFactory(
-            menu_set_in_order=menu_set_in_order_2, product=product_2
+            menu_set_in_order=menu_set_in_order_2, product=product_2, ordering_number=0
         )
         OrderedProductsInMenuSetsOrderFactory(
-            menu_set_in_order=menu_set_in_order_2, product=product_3
+            menu_set_in_order=menu_set_in_order_2, product=product_3, ordering_number=1
         )
         OrderedProductsInMenuSetsOrderFactory(
-            menu_set_in_order=menu_set_in_order_2, product=product_4
+            menu_set_in_order=menu_set_in_order_2, product=product_4, ordering_number=2
         )
 
         url = reverse("menu:orders-detail", args=[self.order.id])
@@ -423,6 +448,7 @@ class TestOrdersViewSet(APITestCase):
 
         data = json.dumps(response.data)
         data = json.loads(data)
+
         self.assertDictEqual(
             data,
             {
@@ -674,10 +700,13 @@ class TestMenuSetViewSet(APITestCase):
         step_1 = MenuSetStepFactory(menu_set=self.menu_set)
         step_2 = MenuSetStepFactory(menu_set=self.menu_set)
 
-        product_1_1 = ProductFactory()
+        with freeze_time("2022-01-14 12:45:01.0002", tz_offset=1):
+            product_1_1 = ProductFactory()
         product_1_2 = ProductFactory()
-        product_2_1 = ProductFactory()
-        product_2_2 = ProductFactory()
+        with freeze_time("2022-01-15 12:45:01.0002", tz_offset=1):
+            product_2_1 = ProductFactory()
+        with freeze_time("2022-01-16 12:45:01.0002", tz_offset=1):
+            product_2_2 = ProductFactory()
         product_2_3 = ProductFactory()
         step_1.products.add(product_1_1)
         step_1.products.add(product_1_2)

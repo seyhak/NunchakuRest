@@ -30,6 +30,14 @@ class MenuViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
 
+    def get_queryset(self):
+        qs = (
+            super()
+            .get_queryset()
+            .prefetch_related("menu_sets", "products", "categories")
+        )
+        return qs
+
 
 class OrderViewSet(
     mixins.CreateModelMixin,
@@ -43,16 +51,17 @@ class OrderViewSet(
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
-    # def get_serializer_class(self):
-    #     if self.request.method == "PATCH":
-    #         return None
-    #     return self.serializer_class
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.request.method == "GET":
+            return queryset.filter(finished_at__isnull=True)
+        return queryset
 
     @decorators.action(
         url_name="finish-order", detail=True, methods=["patch"], url_path="finish-order"
     )
     def finish_order(self, request, pk=None):
-        order = self.get_object()
+        order: Order = self.get_object()
         order.finished_at = timezone.now()
         order.save()
         serializer = self.get_serializer(order)

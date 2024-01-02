@@ -34,6 +34,7 @@ class OrderedModel(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ["ordering_number"]
 
 
 class Product(TimestampedModel, UUIDModel):
@@ -47,6 +48,9 @@ class Product(TimestampedModel, UUIDModel):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ["created_at"]
+
 
 class Category(TimestampedModel, UUIDModel):
     name = models.CharField(max_length=255)
@@ -56,16 +60,15 @@ class Category(TimestampedModel, UUIDModel):
         max_length=7, blank=True, null=True, help_text="Hex color code, e.g., #RRGGBB"
     )
     sub_categories = models.ManyToManyField(
-        "self",
-        blank=True,
-        symmetrical=False,
-        related_name="parent_category",
-        limit_choices_to=~models.Q(id=models.F("id")),
+        "self", blank=True, symmetrical=False, related_name="parent_category"
     )
     products = models.ManyToManyField(Product, blank=True, related_name="category")
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ["created_at"]
 
 
 class MenuSet(IsActiveModel, UUIDModel, TimestampedModel):
@@ -73,6 +76,9 @@ class MenuSet(IsActiveModel, UUIDModel, TimestampedModel):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ["created_at"]
 
 
 class MenuSetStep(IsActiveModel, UUIDModel, TimestampedModel):
@@ -89,6 +95,7 @@ class MenuSetStep(IsActiveModel, UUIDModel, TimestampedModel):
 
     class Meta:
         unique_together = [("name", "menu_set")]
+        ordering = ["created_at"]
 
     def __str__(self):
         return f"{self.menu_set.name} - {self.name}"
@@ -102,9 +109,17 @@ class Menu(TimestampedModel, UUIDModel):
     products = models.ManyToManyField(Product, related_name="menus", blank=True)
     menu_sets = models.ManyToManyField(MenuSet, related_name="menus", blank=True)
 
+    class Meta:
+        ordering = ["created_at"]
+
     def clean(self):
         if self.start_date and self.end_date and self.start_date > self.end_date:
             raise ValidationError("Start date cannot be later than end date.")
+
+    # @property
+    # def is_active(self):
+    #     "Returns the person's full name."
+    #     return f"{self.first_name} {self.last_name}"
 
     def __str__(self):
         return self.name
@@ -138,7 +153,9 @@ class Order(TimestampedModel, UUIDModel):
     menu_sets = models.ManyToManyField(
         MenuSet, related_name="orders", through="MenuSetsInOrderAmount"
     )
-    order_id = models.CharField(editable=False, default=order_id_default)
+    order_id = models.CharField(
+        editable=False, default=order_id_default, max_length=255
+    )
     payment_method = models.CharField(max_length=2, default=PaymentMethods.CASH)
     is_paid = models.BooleanField(default=False)
     delivery_method = models.CharField(max_length=2, default=DeliveryMethods.HERE)
@@ -149,6 +166,9 @@ class Order(TimestampedModel, UUIDModel):
 
     def __str__(self):
         return self.order_id
+
+    class Meta:
+        ordering = ["created_at"]
 
 
 class ProductInOrderAmount(models.Model):
@@ -161,6 +181,8 @@ class ProductInOrderAmount(models.Model):
 
 
 class MenuSetsInOrderAmount(TimestampedModel):
+    """Model represents relations of order and menu set with products ordered."""
+
     products = models.ManyToManyField(Product, through="OrderedProductsInMenuSetsOrder")
     menu_set = models.ForeignKey(MenuSet, on_delete=models.DO_NOTHING)
     order = models.ForeignKey(Order, on_delete=models.DO_NOTHING)

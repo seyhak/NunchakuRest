@@ -100,7 +100,7 @@ PG_HOST = os.environ.get("PG_HOST", "localhost")
 PG_USER = os.environ.get("PG_USER", "seyhak")
 PG_NAME = os.environ.get("PG_NAME", "PG")
 PG_PASSWORD = os.environ.get("PG_PASSWORD", "seyhak_pass")
-DATABASES = {
+DATABASE_PG = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": PG_NAME,
@@ -115,6 +115,16 @@ DATABASES = {
         #     "service": "my_service",
         #     "passfile": ".my_pgpass",
         # },
+    }
+}
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db" / "db.sqlite3",
+        "TEST": {
+            "NAME": "db_test.sqlite3",
+            # 'NAME': ':memory:',
+        },
     }
 }
 

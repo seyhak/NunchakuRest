@@ -1,4 +1,4 @@
-from factory import SubFactory, fuzzy
+from factory import LazyAttribute, SubFactory, fuzzy
 from factory.django import DjangoModelFactory
 
 from menu.models import (
@@ -75,6 +75,12 @@ class MenuSetsInOrderAmountFactory(DjangoModelFactory):
 class OrderedProductsInMenuSetsOrderFactory(DjangoModelFactory):
     menu_set_in_order = SubFactory(MenuSetsInOrderAmount)
     product = SubFactory(ProductFactory)
+    ordering_number = LazyAttribute(
+        lambda obj: OrderedProductsInMenuSetsOrder.objects.filter(
+            product=obj.product, menu_set_in_order=obj.menu_set_in_order
+        ).count()
+        + 1
+    )
 
     class Meta:
         model = OrderedProductsInMenuSetsOrder

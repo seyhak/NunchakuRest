@@ -42,9 +42,9 @@ class MenuAdmin(admin.ModelAdmin):
         "end_date",
     ]
 
-    def is_active(self, obj):
+    def is_active(self, obj: Menu):
         now = timezone.now()
-        return (obj.end_date and now < obj.end_date) or False
+        return not obj.end_date or (obj.end_date and now.date() < obj.end_date)
 
     is_active.boolean = True
 

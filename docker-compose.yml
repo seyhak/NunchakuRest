@@ -1,27 +1,28 @@
 version: "3.8"
 
 services:
-  postgres:
-    container_name: pg
-    image: postgres:16-alpine
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=seyhak
-      - POSTGRES_PASSWORD=seyhak_pass
-      - POSTGRES_DB=PG
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      # utilize this 
-      # - ./db/.pgpass:/var/lib/postgresql/data/.pgpass
-      # - ./db/pg_service.conf:/var/lib/postgresql/data/pg_service.conf
-      # - ./db/pg_service.conf:/pg_service.conf
-    tty: true
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "seyhak", "-d", "PG"]
-      interval: 3s
-      timeout: 5s
-      retries: 5
+  # uncomment if PG needed
+  # postgres:
+  #   container_name: pg
+  #   image: postgres:16-alpine
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     - POSTGRES_USER=seyhak
+  #     - POSTGRES_PASSWORD=seyhak_pass
+  #     - POSTGRES_DB=PG
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #     # utilize this 
+  #     # - ./db/.pgpass:/var/lib/postgresql/data/.pgpass
+  #     # - ./db/pg_service.conf:/var/lib/postgresql/data/pg_service.conf
+  #     # - ./db/pg_service.conf:/pg_service.conf
+  #   tty: true
+  #   healthcheck:
+  #     test: ["CMD", "pg_isready", "-U", "seyhak", "-d", "PG"]
+  #     interval: 3s
+  #     timeout: 5s
+  #     retries: 5
 
   # hot reload doesnt work with docker, fix later
   # frontend:
@@ -52,13 +53,14 @@ services:
     volumes:
       - ./backend/:/usr/src/app:delegated
       - ./frontend/:/usr/src/app:delegated
-    depends_on:
+    # depends_on:
       # frontend:
       #   condition: service_started
-      postgres:
-        condition: service_healthy
-    links:
-      - postgres
+      # postgres:
+        # condition: service_healthy
+    # uncomment if PG needed
+    # links:
+      # - postgres
     tty: true
 
   black:
@@ -70,7 +72,7 @@ services:
       - ./backend/:/usr/src/app:delegated
     tty : true
 
-volumes:
-  postgres_data:
+# volumes:
+  # postgres_data:
   # nm:
   # next:
