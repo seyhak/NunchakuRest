@@ -29,7 +29,7 @@ const STATE_MESSAGES = {
   [LoginManagerStates.LOGIN]: "Need Account? Sign Up",
 }
 
-export function LoginManager(props: LoginManagerProps) {
+export function LoginManager() {
   const {
     form: { control, handleSubmit, formState },
     onSubmit,

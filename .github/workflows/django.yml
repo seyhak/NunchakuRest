@@ -10,17 +10,16 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    # uncomment if pgsql needed
-    # services:
-    #   postgres:
-    #     image: postgres:latest
-    #     env:
-    #       POSTGRES_DB: test
-    #       POSTGRES_USER: test_user
-    #       POSTGRES_PASSWORD: test_user_password
-    #     ports:
-    #       - 5432:5432
-    #     options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: test
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_user_password
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
     - uses: actions/checkout@v3
@@ -36,9 +35,9 @@ jobs:
     - name: Run Tests
       env:
         # The hostname used to communicate with the PostgreSQL service container
-        # PG_USER: test_user
-        # PG_NAME: test
-        # PG_PASSWORD: test_user_password
+        PG_USER: test_user
+        PG_NAME: test
+        PG_PASSWORD: test_user_password
         DJANGO_SECRET_KEY: test_secret_key
       run: |
         cd backend

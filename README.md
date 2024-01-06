@@ -34,7 +34,7 @@ yarn dev
 from particular container, black, isort, autoflake 
 ```
 isort .
-autoflake --in-place --remove-unused-variables .
+autoflake * -r \--remove-all-unused-imports --remove-unused-variables --quiet -i
 black <dir>
 black .
 ```
@@ -63,3 +63,13 @@ in container `apk add gettext`
 `python manage.py makemessages -l pl`
 
 `python manage.py compilemessages`
+
+## Deploy
+
+1) go to backend/frontend
+2) run `gcloud app deploy`
+
+## Gcloud
+
+* https://nextjsapp-dot-stunning-surge-409813.lm.r.appspot.com/
+* https://stunning-surge-409813.lm.r.appspot.com/admin/

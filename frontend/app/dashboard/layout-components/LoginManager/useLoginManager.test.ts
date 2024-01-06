@@ -74,7 +74,7 @@ describe("useLoginManager", () => {
         await result.current.onSubmit(result.current.form.getValues())
       })
       expect(loginFetcher).toHaveBeenCalledWith({
-        password: "mocked-hash",
+        password: "testPassword",
         username: "testUser",
       })
       expect(setUser).toHaveBeenCalledWith(mockUser)

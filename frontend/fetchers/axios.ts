@@ -23,7 +23,6 @@ axiosInstance.interceptors.request.use((config) => {
         HTTP_X_CSRFTOKEN: csrfToken!,
       }
       config.headers = headers as any
-      console.log({ config })
     }
   }
   if (config.data) {

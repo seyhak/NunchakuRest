@@ -7,14 +7,15 @@
 [ ] add possibility many nested categories with self excluded
 [ ] pip install django-modeltranslation
 [x] Husky and githooks setup
+[ ] Logging for prod
 [ ] On 403 redirect to login
 [x] Login
 [ ] Creating Roles - Admin, Manager, Employee, Client
 [ ] Welcome page - SSR page advertising the restaurant
-[ ] Displaying POS (ordering) for employee
+[x] Displaying POS (ordering) for employee
 [x] Displaying orders todo for employees
-[ ] Displaying ready/pending orders (websockets)
-[ ] Managing Menu via Django Admin
+[x] Displaying ready/pending orders (websockets-pining put (free clound doesnt allow for websockets))
+[x] Managing Menu via Django Admin
 [x] Displaying ordering for client
 [ ] Manager/employee can see orders from history, and later Charts from minor
 
@@ -29,6 +30,7 @@
 [ ] Manager can see charts perhaps using https://d3js.org displaying data related with some time
 
 ## Minor
+[ ] Github action for deploy
 [ ] Login with FB/Google
 [ ] random "I dont know what I would like to eat machine 3D"
 [ ] Manager can see charts perhaps using https://d3js.org displaying data related with some time using async tasks

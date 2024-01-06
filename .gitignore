@@ -7,6 +7,7 @@
 
 # backend
 /backend/db/*.sqlite3
+/backend/static/*
 /backend/.venv/
 /backend/**/__pycache__/
 
