@@ -1,3 +1,4 @@
+'use client'
 import * as React from "react"
 import hashString from "@/utils/crypto"
 import { useForm } from "react-hook-form"
@@ -100,7 +101,8 @@ export const useLoginManager = () => {
     []
   )
   const onSubmit = async (data: FormData) => {
-    const hashedPassword = await hashString(data.password)
+    const hashedPassword = data.password
+    // const hashedPassword = await hashString(data.password)
 
     let user: User
     const isLoggingIn = loginManagerState === LoginManagerStates.LOGIN

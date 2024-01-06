@@ -1,6 +1,6 @@
 import React from "react"
-import useSWR, { SWRConfiguration } from "swr"
-import getCookie from "./get-cookie"
+import { SWRConfiguration, default as useSWR } from "swr"
+// import getCookie from "./get-cookie"
 import axiosInstance from "@/fetchers/axios"
 
 export const usrFetcher = async (url: string) => {

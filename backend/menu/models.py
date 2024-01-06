@@ -188,6 +188,9 @@ class MenuSetsInOrderAmount(TimestampedModel):
     order = models.ForeignKey(Order, on_delete=models.DO_NOTHING)
     amount = models.PositiveIntegerField(validators=[MinValueValidator(1)])
 
+    class Meta:
+        ordering = ["created_at"]
+
 
 class OrderedProductsInMenuSetsOrder(OrderedModel):
     menu_set_in_order = models.ForeignKey(

@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -27,11 +27,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = [
-    "localhost",
-]
 
 # Application definition
 
@@ -66,12 +61,6 @@ REST_FRAMEWORK = {
     ],
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Next.js app
-]
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",  # Next.js app
-]
 ROOT_URLCONF = "nunchakurest.urls"
 
 TEMPLATES = [
@@ -117,16 +106,16 @@ DATABASE_PG = {
         # },
     }
 }
-DATABASES = {
+DATABASE_SQLITE = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db" / "db.sqlite3",
         "TEST": {
             "NAME": "db_test.sqlite3",
-            # 'NAME': ':memory:',
         },
     }
 }
+DATABASES = {**DATABASE_PG}
 
 
 # Password validation
@@ -171,8 +160,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
-STATICFILES_DIRS = [BASE_DIR.parent / "build" / "static"]
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [
+    BASE_DIR / "nunchakurest" / "static",
+]
+STATIC_ROOT = "static"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

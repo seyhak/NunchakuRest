@@ -48,7 +48,7 @@ describe.skip('LoginManager', () => {
     // Mocking form input values
     const usernameInput = screen.getByLabelText('Login')
     const passwordInput = screen.getByLabelText('Password')
-    
+
     await act(() => {
       fireEvent.change(usernameInput, { target: { value: 'testUser' } })
       fireEvent.change(passwordInput, { target: { value: 'testPassword' } })
@@ -67,7 +67,7 @@ describe.skip('LoginManager', () => {
   })
   it('handles signup form submission', async () => {
     render(<LoginManager open={true} selectedValue="" onClose={() => {}} />)
-    
+
     // Switch to the signup form
     const switchButton = screen.getByText('Need Account? Sign Up')
     act(() => {
@@ -80,7 +80,7 @@ describe.skip('LoginManager', () => {
     const emailInput = screen.getByLabelText('Email')
     const firstNameInput = screen.getByLabelText('First name')
     const lastNameInput = screen.getByLabelText('Last name')
-    
+
     act(() => {
       fireEvent.change(usernameInput, { target: { value: 'testUser' } })
       fireEvent.change(passwordInput, { target: { value: 'testPassword' } })
@@ -103,7 +103,7 @@ describe.skip('LoginManager', () => {
 
   it('toggles between login and signup forms', () => {
     render(<LoginManager open={true} selectedValue="" onClose={() => {}} />)
-    
+
     // Switch to the signup form
     const switchButton = screen.getByText('Need Account? Sign Up')
     act(() => {
@@ -133,11 +133,11 @@ describe.skip('LoginManager', () => {
     })
 
     render(<LoginManager open={true} selectedValue="" onClose={() => {}} />)
-    
+
     // Mocking form input values
     const usernameInput = screen.getByLabelText('Login')
     const passwordInput = screen.getByLabelText('Password')
-    
+
     act(() => {
       fireEvent.change(usernameInput, { target: { value: 'testUser' } })
       fireEvent.change(passwordInput, { target: { value: 'testPassword' } })
@@ -164,7 +164,7 @@ describe.skip('LoginManager', () => {
     })
 
     render(<LoginManager open={true} selectedValue="" onClose={() => {}} />)
-    
+
     // Switch to the signup form
     const switchButton = screen.getByText('Need Account? Sign Up')
     act(() => {
@@ -177,7 +177,7 @@ describe.skip('LoginManager', () => {
     const emailInput = screen.getByLabelText('Email')
     const firstNameInput = screen.getByLabelText('First name')
     const lastNameInput = screen.getByLabelText('Last name')
-    
+
     act(() => {
       fireEvent.change(usernameInput, { target: { value: 'testUser' } })
       fireEvent.change(passwordInput, { target: { value: 'testPassword' } })
@@ -200,7 +200,7 @@ describe.skip('LoginManager', () => {
 
   it('handles cancel button click', () => {
     render(<LoginManager open={true} selectedValue="" onClose={() => {}} />)
-    
+
     const cancelButton = screen.getByText('Cancel')
     act(() => {
       fireEvent.click(cancelButton)
@@ -221,11 +221,11 @@ describe.skip('LoginManager', () => {
     })
 
     render(<LoginManager open={true} selectedValue="" onClose={() => {}} />)
-    
+
     // Mocking form input values
     const usernameInput = screen.getByLabelText('Login')
     const passwordInput = screen.getByLabelText('Password')
-    
+
     act(() => {
       fireEvent.change(usernameInput, { target: { value: 'testUser' } })
       fireEvent.change(passwordInput, { target: { value: 'testPassword' } })
@@ -251,7 +251,7 @@ describe.skip('LoginManager', () => {
     })
 
     render(<LoginManager open={false} selectedValue="" onClose={() => {}} />)
-    
+
     // Ensure that the user avatar is displayed
     expect(screen.getByAltText('User Avatar')).toBeInTheDocument()
   })
@@ -264,7 +264,7 @@ describe.skip('LoginManager', () => {
     })
 
     render(<LoginManager open={false} selectedValue="" onClose={() => {}} />)
-    
+
     // Trigger user avatar click
     const userAvatar = screen.getByAltText('User Avatar')
     act(() => {

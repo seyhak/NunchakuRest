@@ -108,7 +108,7 @@ describe("useMenu", () => {
         },
         {
           id: '1234',
-          name: 'Huge Dildo BLACK Turbo Spiral Destroyer',      
+          name: 'Huge Dildo BLACK Turbo Spiral Destroyer',
           onClick: expect.any(Function),
           price: '10.69'
         },

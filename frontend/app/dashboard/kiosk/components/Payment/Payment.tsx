@@ -37,7 +37,7 @@ const items = useMemo(() => {
             <div key={op.name} className="product">
               <Typography>{`${op.name} x ${op.amount}:`}</Typography>
               <Typography>{op.price}</Typography>
-              </div> 
+              </div>
             ))}
           </div>
           <Divider/>

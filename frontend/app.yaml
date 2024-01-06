@@ -1,0 +1,5 @@
+service: nextjsapp
+runtime: nodejs20
+env_variables:
+  NEXT_TARGET: gcp
+instance_class: F2

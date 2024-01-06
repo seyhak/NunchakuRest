@@ -6,7 +6,7 @@ import { useOrderDisplay } from "./useOrderDisplay"
 import { Backdrop, Typography } from "@mui/material"
 import { TileButton } from "@/components/TileButton/TileButton"
 
-const OrderDisplay = () => {
+export default function OrderDisplay() {
   const { isLoading, data: orders, onButtonClick, handleCloseDialog, handleCompleteOrder, isControlDialogOpen } = useOrderDisplay()
 
   return (
@@ -27,5 +27,3 @@ const OrderDisplay = () => {
     </section>
   )
 }
-
-export default OrderDisplay

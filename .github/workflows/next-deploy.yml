@@ -1,0 +1,15 @@
+name: Django Deploy CI
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+    steps:
+    # - uses: actions/checkout@v3
+    - name: TODO
+      run: |
+        cd backend
